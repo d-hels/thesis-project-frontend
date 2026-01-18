@@ -16,6 +16,8 @@ interface User {
     phone?: string;
     address?: string;
     token?: string;
+    departmentId?: number;
+    positionsId?: number;
     timestamp?: number;
 }
 

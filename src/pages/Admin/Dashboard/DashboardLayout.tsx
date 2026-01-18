@@ -28,7 +28,7 @@ const AppLayout = () => {
         return <UsersTable />;
   
       case "createUser":
-        return <CreateAdminForm />;
+        return <CreateAdminForm setActiveMenu={setActiveMenu} />;
   
       case "departments":
         return <DepartmentsTable />;

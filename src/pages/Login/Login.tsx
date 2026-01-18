@@ -1,7 +1,7 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, Card, Typography } from "antd";
+import { Button, Checkbox, Form, Input, Card, Typography, message } from "antd";
 import AppHeader from "../../components/Header/Header";
-import { adminLogin } from "../../api/apiCall";
+import { managerLogin } from "../../api/apiCall";
 import { useAuth } from "../../auth/auth";
 import { setUser } from "../../auth/actions";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
-    const response = await adminLogin({
+    const response = await managerLogin({
       email: values.email,
       password: values.password,
     });
@@ -22,17 +22,20 @@ const LoginPage = () => {
       dispatch(
         setUser({
           id: response.data.payload.user.id,
+          token: response.data.payload.token,
           name: response.data.payload.user.first_name,
           surname: response.data.payload.user.last_name,
           email: response.data.payload.user.email,
           role: response.data.payload.user.role,
           phone: response.data.payload.user.phone,
           address: response.data.payload.user.address,
-          token: response.data.payload.token,
+          departmentId: response.data.payload.user.departmentId,
+          positionsId: response.data.payload.user.positionsId,
         })
       );
       navigate("/pace-team/resourcing/resource-tracker");
     } else {
+      message.error(response?.data.payload);
     }
   };
 

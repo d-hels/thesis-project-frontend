@@ -1,5 +1,9 @@
 import { Form, Input, Button, Card, Typography, Select, message } from "antd";
-import { createManager, getDepartments, getPositionsByDepartment } from "../../../api/apiCall";
+import {
+  createWorker,
+  getDepartments,
+  getPositionsByDepartment,
+} from "../../../api/apiCall";
 import { useAuth } from "../../../auth/auth";
 import { useEffect, useState } from "react";
 
@@ -15,15 +19,14 @@ const CreateWorkersForm = () => {
 
   const onFinish = async (values: any) => {
     try {
-      const res: any = await createManager(state.user?.token, values);
+      const res: any = await createWorker(state.user?.token, values);
 
       if (res?.data.success) {
-        if(res.data.payload === 'This user exists') {
-            message.error(res?.message || "This user exists");
-            return;
+        if (res.data.payload === "This user exists") {
+          message.error(res?.message || "This user exists");
+          return;
         }
         message.success("User created successfully");
-        //form.resetFields();
       } else {
         message.error(res?.message || "This user exists");
       }
@@ -32,10 +35,23 @@ const CreateWorkersForm = () => {
     }
   };
 
+  useEffect(() => {
+    if (state.user?.departmentId) {
+      form.setFieldsValue({
+        departmentId: state.user.departmentId,
+      });
+      fetchPositions(state.user?.departmentId);
+    }
+  }, [state.user?.departmentId]);
+
   const fetchDepartments = async () => {
     const response = await getDepartments(state.user?.token);
+
     if (response.success) {
-      setDepartments(response.payload);
+      const userDepartment = response.payload.find(
+        (dept: any) => dept.id === state.user?.departmentId
+      );
+      setDepartments([userDepartment]);
     }
   };
 
@@ -45,7 +61,7 @@ const CreateWorkersForm = () => {
       state.user?.token,
       departmentId
     );
-  
+
     if (response.success) {
       const payload = Array.isArray(response.payload)
         ? response.payload
@@ -56,10 +72,10 @@ const CreateWorkersForm = () => {
     } else {
       setPositions([]);
     }
-  
+
     setLoadingPositions(false);
   };
-  
+
   useEffect(() => {
     fetchDepartments();
   }, []);
@@ -137,23 +153,18 @@ const CreateWorkersForm = () => {
           name="departmentId"
           rules={[{ required: true, message: "Department is required" }]}
         >
-          <Select
-            placeholder="Select department"
-            onChange={(value) => {
-              form.setFieldsValue({ positionId: undefined });
-              fetchPositions(value);
-            }}
-          >
+          <Select placeholder="Select department" disabled>
             {departments.map((dept) => (
-              <Option key={dept.id} value={dept.id}>
+              <Select.Option key={dept.id} value={dept.id}>
                 {dept.name}
-              </Option>
+              </Select.Option>
             ))}
           </Select>
         </Form.Item>
 
-        {/* Position (depends on department) */}
-        <Form.Item shouldUpdate={(prev, curr) => prev.departmentId !== curr.departmentId}>
+        <Form.Item
+          shouldUpdate={(prev, curr) => prev.departmentId !== curr.departmentId}
+        >
           {({ getFieldValue }) =>
             getFieldValue("departmentId") ? (
               <Form.Item

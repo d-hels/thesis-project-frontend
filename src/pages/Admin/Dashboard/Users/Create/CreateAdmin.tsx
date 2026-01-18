@@ -1,30 +1,72 @@
-import { Form, Input, Button, Card, Typography, Select } from "antd";
-import { createAdmin, getDepartments } from "../../../../../api/apiCall";
+import { Form, Input, Button, Card, Typography, Select, message } from "antd";
+import {
+  createAdmin,
+  getDepartments,
+  getPositionsByDepartment,
+} from "../../../../../api/apiCall";
 import { useAuth } from "../../../../../auth/auth";
 import { useEffect, useState } from "react";
 
 const { Title } = Typography;
 const { Option } = Select;
 
-const CreateAdminForm = () => {
-    const {state} = useAuth();
-    const [departments, setDepartments] = useState([]);
-    const [form] = Form.useForm();
+const CreateAdminForm = ({ setActiveMenu }: any) => {
+  const { state } = useAuth();
+  const [departments, setDepartments] = useState([]);
+  const [positions, setPositions] = useState<any[]>([]);
+  const [loadingPositions, setLoadingPositions] = useState(false);
+  const [form] = Form.useForm();
 
   const onFinish = async (values: any) => {
-    await createAdmin(state.user?.token, values);
+    try {
+      const res: any = await createAdmin(state.user?.token, values);
+
+      if (res?.data.success) {
+        if (res.data.payload === "This user exists") {
+          message.error(res?.message || "This user exists");
+          return;
+        }
+        message.success("User created successfully");
+        setActiveMenu("users-list");
+      } else {
+        message.error(res?.message || "This user exists");
+      }
+    } catch {
+      message.error("Something went wrong");
+    }
   };
 
   const fetchDepartments = async () => {
     const response = await getDepartments(state.user?.token);
-    if(response.success) {
+    if (response.success) {
       setDepartments(response.payload);
     }
-  }
+  };
 
-  useEffect (() => {
-    fetchDepartments()
-  }, [])
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
+
+  const fetchPositions = async (departmentId: number) => {
+    setLoadingPositions(true);
+    const response = await getPositionsByDepartment(
+      state.user?.token,
+      departmentId
+    );
+
+    if (response.success) {
+      const payload = Array.isArray(response.payload)
+        ? response.payload
+        : response.payload
+        ? [response.payload]
+        : [];
+      setPositions(payload);
+    } else {
+      setPositions([]);
+    }
+
+    setLoadingPositions(false);
+  };
 
   return (
     <Card style={{ maxWidth: 500, margin: "0 auto" }} bordered={false}>
@@ -76,20 +118,12 @@ const CreateAdminForm = () => {
         </Form.Item>
 
         {/* Phone */}
-        <Form.Item
-          label="Phone"
-          name="phone"
-          rules={[{ required: true }]}
-        >
+        <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
 
         {/* Address */}
-        <Form.Item
-          label="Address"
-          name="address"
-          rules={[{ required: true }]}
-        >
+        <Form.Item label="Address" name="address" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
 
@@ -99,26 +133,76 @@ const CreateAdminForm = () => {
           name="role"
           rules={[{ required: true, message: "Role is required" }]}
         >
-          <Select placeholder="Select role">
+          <Select
+            placeholder="Select role"
+            onChange={() => {
+              form.setFieldsValue({
+                departmentId: undefined,
+                positionId: undefined,
+              });
+              setPositions([]);
+            }}
+          >
             <Option value="admin">Admin</Option>
             <Option value="manager">Manager</Option>
           </Select>
         </Form.Item>
 
         {/* Department – ONLY for manager */}
-        <Form.Item shouldUpdate={(prev, curr) => prev.role !== curr.role}>
+        <Form.Item
+          shouldUpdate={(prev, curr) => prev.role !== curr.role}
+          noStyle
+        >
           {({ getFieldValue }) =>
             getFieldValue("role") === "manager" ? (
               <Form.Item
                 label="Department"
                 name="departmentId"
                 rules={[
-                  { required: true, message: "Department is required for managers" },
+                  {
+                    required: true,
+                    message: "Department is required for managers",
+                  },
                 ]}
               >
-                <Select placeholder="Select department">
-                  {departments.map((value: any) => (
-                    <Option value={value.id}>{value.name}</Option>
+                <Select
+                  placeholder="Select department"
+                  onChange={(value) => {
+                    form.setFieldsValue({ positionId: undefined });
+                    fetchPositions(value);
+                  }}
+                >
+                  {departments.map((dep: any) => (
+                    <Option key={dep.id} value={dep.id}>
+                      {dep.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            ) : null
+          }
+        </Form.Item>
+
+        <Form.Item
+          shouldUpdate={(prev, curr) => prev.departmentId !== curr.departmentId}
+          noStyle
+        >
+          {({ getFieldValue }) =>
+            getFieldValue("departmentId") ? (
+              <Form.Item
+                label="Position"
+                name="positionId"
+                rules={[{ required: true, message: "Position is required" }]}
+              >
+                <Select
+                  placeholder="Select position"
+                  loading={loadingPositions}
+                  disabled={positions.length === 0}
+                >
+                  {positions.map((pos: any) => (
+                    <Option key={pos.id} value={pos.id}>
+                      {pos.title}
+                    </Option>
                   ))}
                 </Select>
               </Form.Item>
