@@ -1,24 +1,14 @@
 import {
   Layout,
   Card,
-  Row,
-  Col,
-  Statistic,
   Table,
   Tag,
   Button,
   Space,
 } from "antd";
+import StatsCards from "./StatsCards/StatsCards";
 
 const { Content } = Layout;
-
-// ------------------ Mock Data ------------------
-const stats = [
-  { title: "Total Employees", value: 128 },
-  { title: "Active Employees", value: 112 },
-  { title: "Departments", value: 8 },
-  { title: "Open Positions", value: 5 },
-];
 
 const employees = [
   {
@@ -43,19 +33,6 @@ const employees = [
     status: "Active",
   },
 ];
-
-// ------------------ Components ------------------
-const StatsCards = () => (
-  <Row gutter={16} style={{ marginBottom: 24 }}>
-    {stats.map((item) => (
-      <Col xs={24} sm={12} md={6} key={item.title}>
-        <Card bordered={false} style={{ borderRadius: 12 }}>
-          <Statistic title={item.title} value={item.value} />
-        </Card>
-      </Col>
-    ))}
-  </Row>
-);
 
 const EmployeesTable = () => {
   const columns = [

@@ -1,15 +1,18 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/Login/Login";
-import './App.css';
+import "./App.css";
 import { useAuth } from "./auth/auth";
 import DepartmentsTable from "./pages/Department/DepartmentsTable";
 import CreateAdminForm from "./pages/Admin/Dashboard/Users/Create/CreateAdmin";
 import Dashboard from "./pages/Admin/Dashboard/DashboardLayout";
 import PositionsTable from "./pages/Positions/PositionTable";
 import AppLayout from "./pages/Manager/Layout/Layout";
+import AdminGate from "./pages/Admin/AdminGate/AdminGate";
+import AdminGateRoute from "./pages/Admin/AdminGate/AdminRoute";
+import LoginPageAdmin from "./pages/Login/AdminLogin/AdminLogin";
 
 const App = () => {
-  const {state} = useAuth();
+  const { state } = useAuth();
 
   return (
     <>
@@ -32,6 +35,15 @@ const App = () => {
       )}
       {!state.user?.token && (
         <Routes>
+          <Route path="/admin" element={<AdminGate />} />
+          <Route
+            path="/admin/login"
+            element={
+              <AdminGateRoute>
+                <LoginPageAdmin />
+              </AdminGateRoute>
+            }
+          />
           <Route path="/login" element={<LoginPage />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

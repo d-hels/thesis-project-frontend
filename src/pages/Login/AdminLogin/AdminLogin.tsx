@@ -1,14 +1,13 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, Card, Typography } from "antd";
-import AppHeader from "../../components/Header/Header";
-import { adminLogin } from "../../api/apiCall";
-import { useAuth } from "../../auth/auth";
-import { setUser } from "../../auth/actions";
+import { adminLogin } from "../../../api/apiCall";
+import { useAuth } from "../../../auth/auth";
+import { setUser } from "../../../auth/actions";
 import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
-const LoginPage = () => {
+const LoginPageAdmin = () => {
   const { dispatch } = useAuth();
   const navigate = useNavigate();
 
@@ -38,8 +37,6 @@ const LoginPage = () => {
 
   return (
     <>
-      <AppHeader />
-
       <div
         style={{
           minHeight: "100vh",
@@ -147,4 +144,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default LoginPageAdmin;

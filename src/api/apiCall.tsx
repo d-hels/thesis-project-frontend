@@ -6,13 +6,31 @@ export const adminLogin = async (payload: any) => {
     try {
       const response = await axios.post(
         `${apiUrl}api/admin/login`,
-        payload
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("admin_gate_token")}`,
+          },
+        }
       );
-
       return response;
     } catch (error) {
       console.log(error);
     }
+};
+
+export const adminGate = async (payload: any) => {
+  try {
+    const response = await axios.post(
+      `${apiUrl}api/admin/gate`,
+      payload
+    );
+
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const createAdmin = async (token: any, payload: any) => {
@@ -70,6 +88,23 @@ export const getUsers = async (token: any) => {
 export const updateUser = async (token: any, payload: any) => {
   try {
     const response = await axios.put(`${apiUrl}api/admin/users/update`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error;
+  }
+};
+
+export const updateMyProfile = async (token: any, payload: any) => {
+  try {
+    const response = await axios.put(`${apiUrl}api/admin/users/myProfile/update`,
       payload,
       {
         headers: {
@@ -298,4 +333,20 @@ export const deleteWorker = async (token: any, id: any) => {
   );
 
   return response.data;
+};
+
+export const getUsersCount = async (token: any) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}api/admin/getUsersCount`,{
+      headers: {
+          Authorization: `Bearer ${token}`,
+        },
+  }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
 };

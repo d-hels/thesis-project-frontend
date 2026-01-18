@@ -37,7 +37,7 @@ const getUserFromLocalStorage = (): User | null => {
         return user;
     }
     localStorage.removeItem("user");
-    localStorage.removeItem("avatarColor");
+    sessionStorage.removeItem("admin_gate_token")
     return null;
 };
 

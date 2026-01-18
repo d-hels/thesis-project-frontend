@@ -15,11 +15,12 @@ import {
   Spin,
 } from "antd";
 import { UserOutlined, SaveOutlined } from "@ant-design/icons";
-//import { getMyProfile, updateMyProfile } from "../../api/apiCall";
 import { useAuth } from "../../auth/auth";
+import { updateMyProfile } from "../../api/apiCall";
+import { setUser } from "../../auth/actions";
 
-const { Title, Text } = Typography;
-
+const { Title, Text } = Typography;;
+ 
 // type UserProfile = {
 //   id: number;
 //   first_name: string;
@@ -32,33 +33,43 @@ const { Title, Text } = Typography;
 // };
 
 const ProfileDashboard = () => {
-  const { state } = useAuth();
+  const { dispatch, state } = useAuth();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
 
-  const fetchProfile = async () => {
-    try {
-      //const res = await getMyProfile(token);
+  useEffect(() => {
+    if (state.user) {
       setProfile(state.user);
       form.setFieldsValue(state.user);
-    } catch {
-      message.error("Failed to load profile");
-    } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchProfile();
   }, []);
+  
 
   const onSave = async () => {
     try {
-      //const values = await form.validateFields();
-      //await updateMyProfile(token, values);
+      const values = await form.validateFields();
+      const response = await updateMyProfile(state.user?.token, {
+        id: state.user?.id,
+        ...values,
+      });
+      if (response?.success) {
+        const updatedUser = {
+          ...state.user,
+          name: response.payload.firstName,
+          surname: response.payload.lastName,
+          email: response.payload.email,
+          phone: response.payload.phone,
+          address: response.payload.address,
+        };
+      
+        dispatch(setUser(updatedUser));
+      
+        setProfile(updatedUser);
+        form.setFieldsValue(updatedUser);
+      }
       message.success("Profile updated successfully");
-      fetchProfile();
     } catch {
       message.error("Update failed");
     }
@@ -73,7 +84,7 @@ const ProfileDashboard = () => {
         <Card>
           <Space direction="vertical" align="center" style={{ width: "100%" }}>
             <Avatar
-              size={96}
+              size={89}
               icon={<UserOutlined />}
               style={{ backgroundColor: "#1677ff" }}
             />
