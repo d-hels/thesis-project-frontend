@@ -3,38 +3,38 @@ import {
   Card,
   Table,
   Tag,
-  Button,
-  Space,
+  message,
 } from "antd";
 import StatsCards from "./StatsCards/StatsCards";
+import { useEffect, useState } from "react";
+import { recentEmployees } from "../../../api/apiCall";
+import { useAuth } from "../../../auth/auth";
 
 const { Content } = Layout;
 
-const employees = [
-  {
-    key: "1",
-    name: "John Doe",
-    department: "Engineering",
-    position: "Frontend Developer",
-    status: "Active",
-  },
-  {
-    key: "2",
-    name: "Anna Smith",
-    department: "HR",
-    position: "HR Manager",
-    status: "Inactive",
-  },
-  {
-    key: "3",
-    name: "Mark Wilson",
-    department: "Finance",
-    position: "Accountant",
-    status: "Active",
-  },
-];
-
 const EmployeesTable = () => {
+  const { state } = useAuth();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  
+  const fetchWorkers = async () => {
+    setLoading(true);
+    try {
+      const res: any = await recentEmployees(state.user?.token);
+
+      const latest7Workers = res.payload.slice(0, 6);
+      setData(latest7Workers);
+    } catch {
+      message.error("Failed to load users");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWorkers();
+  }, []);
+
   const columns = [
     {
       title: "Name",
@@ -42,14 +42,24 @@ const EmployeesTable = () => {
       key: "name",
     },
     {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
+    },
+    {
       title: "Department",
-      dataIndex: "department",
-      key: "department",
+      dataIndex: "departmentName",
+      key: "departmentName",
     },
     {
       title: "Position",
-      dataIndex: "position",
-      key: "position",
+      dataIndex: "positionTitle",
+      key: "positionTitle",
     },
     {
       title: "Status",
@@ -59,28 +69,27 @@ const EmployeesTable = () => {
         <Tag color={status === "Active" ? "green" : "red"}>{status}</Tag>
       ),
     },
-    {
-      title: "Actions",
-      key: "actions",
-      render: () => (
-        <Space>
-          <Button type="link">Edit</Button>
-          <Button type="link" danger>
-            Disable
-          </Button>
-        </Space>
-      ),
-    },
+    // {
+    //   title: "Actions",
+    //   key: "actions",
+    //   render: () => (
+    //     <Space>
+    //       <Button type="link">Edit</Button>
+    //       <Button type="link" danger>
+    //         Disable
+    //       </Button>
+    //     </Space>
+    //   ),
+    // },
   ];
 
   return (
     <Card title="Recent Employees" bordered={false} style={{ borderRadius: 12 }}>
-      <Table columns={columns} dataSource={employees} pagination={false} />
+      <Table columns={columns} dataSource={data} pagination={false} loading={loading} />
     </Card>
   );
 };
 
-// ------------------ Main Dashboard ------------------
 const AdminDashboard = () => {
 
   return (

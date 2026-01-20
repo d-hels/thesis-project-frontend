@@ -13,6 +13,7 @@ import Dashboard from "../Dashboard/Dashboard";
 import HeaderBar from "./Header";
 import CreateWorkersForm from "../Dashboard/CreateWorker";
 import EmployeesTable from "../Dashboard/Workers/Workers";
+import MyProfile from "../../Profile/Profile";
 
 const { Sider, Content } = Layout;
 
@@ -30,6 +31,8 @@ const AppLayout = () => {
         return <EmployeesTable />;
         case "createUser":
         return <CreateWorkersForm />;
+        case "myProfile":
+          return <MyProfile />;
       default:
         return null;
     }
@@ -93,7 +96,7 @@ const AppLayout = () => {
             borderRadius: 8,
           }}
         >
-        <HeaderBar title={"Dashboard"} />
+        <HeaderBar title={"Dashboard"} setActiveMenu={setActiveMenu} />
           {renderContent()}
         </Content>
       </Layout>

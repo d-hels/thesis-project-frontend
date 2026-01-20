@@ -43,7 +43,7 @@ export const managerLogin = async (payload: any) => {
 export const createAdmin = async (token: any, payload: any) => {
   try {
     const response = await axios.post(
-      `${apiUrl}api/admin/admins/create`,
+      `${apiUrl}api/admin/create`,
       payload,
       {
         headers: {
@@ -61,7 +61,7 @@ export const createAdmin = async (token: any, payload: any) => {
 export const createWorker = async (token: any, payload: any) => {
   try {
     const response = await axios.post(
-      `${apiUrl}api/manager/worker/create`,
+      `${apiUrl}api/manager/workers`,
       payload,
       {
         headers: {
@@ -78,7 +78,7 @@ export const createWorker = async (token: any, payload: any) => {
 
 export const getUsers = async (token: any) => {
   try {
-    const response = await axios.get(`${apiUrl}api/admin/getUsers`, {
+    const response = await axios.get(`${apiUrl}api/admin/users`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -111,7 +111,7 @@ export const updateUser = async (token: any, payload: any) => {
 export const updateMyProfile = async (token: any, payload: any) => {
   try {
     const response = await axios.put(
-      `${apiUrl}api/admin/users/myProfile/update`,
+      `${apiUrl}api/admin/users/me`,
       payload,
       {
         headers: {
@@ -139,7 +139,7 @@ export const deleteUser = async (token: any, id: any) => {
 export const createDepartment = async (token: any, payload: any) => {
   try {
     const response = await axios.post(
-      `${apiUrl}api/manager/createDepartment`,
+      `${apiUrl}api/manager/departments`,
       payload,
       {
         headers: {
@@ -156,7 +156,7 @@ export const createDepartment = async (token: any, payload: any) => {
 
 export const getDepartments = async (token: any) => {
   try {
-    const response = await axios.get(`${apiUrl}api/manager/getDepartments`, {
+    const response = await axios.get(`${apiUrl}api/manager/departments`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -171,7 +171,7 @@ export const getDepartments = async (token: any) => {
 export const updateDepartment = async (token: any, payload: any) => {
   try {
     const response = await axios.put(
-      `${apiUrl}api/manager/departments/update`,
+      `${apiUrl}api/manager/departments`,
       payload,
       {
         headers: {
@@ -188,7 +188,7 @@ export const updateDepartment = async (token: any, payload: any) => {
 
 export const deleteDepartment = async (token: any, id: any) => {
   const response = await axios.delete(
-    `${apiUrl}api/manager/delete/departments/${id}`,
+    `${apiUrl}api/manager/departments/${id}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -202,7 +202,7 @@ export const deleteDepartment = async (token: any, id: any) => {
 export const createPosition = async (token: any, payload: any) => {
   try {
     const response = await axios.post(
-      `${apiUrl}api/manager/createPosition`,
+      `${apiUrl}api/manager/positions`,
       payload,
       {
         headers: {
@@ -219,7 +219,7 @@ export const createPosition = async (token: any, payload: any) => {
 
 export const getPositions = async (token: any) => {
   try {
-    const response = await axios.get(`${apiUrl}api/manager/getPosition`, {
+    const response = await axios.get(`${apiUrl}api/manager/positions`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -234,7 +234,7 @@ export const getPositions = async (token: any) => {
 export const updatePosition = async (token: any, payload: any) => {
   try {
     const response = await axios.put(
-      `${apiUrl}api/manager/positions/update`,
+      `${apiUrl}api/manager/positions`,
       payload,
       {
         headers: {
@@ -251,7 +251,7 @@ export const updatePosition = async (token: any, payload: any) => {
 
 export const deletePosition = async (token: any, id: any) => {
   const response = await axios.delete(
-    `${apiUrl}api/manager/delete/positions/${id}`,
+    `${apiUrl}api/manager/positions/${id}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -267,7 +267,7 @@ export const getPositionsByDepartment = async (
   id?: number
 ) => {
   const res = await axios.get(
-    `${apiUrl}api/manager/getPositionsByDepartmentId/${id}`,
+    `${apiUrl}api/manager/departments/${id}/positions`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -280,7 +280,7 @@ export const getPositionsByDepartment = async (
 
 export const getWorkersCount = async (token: any) => {
   try {
-    const response = await axios.get(`${apiUrl}api/manager/getWorkersCount`, {
+    const response = await axios.get(`${apiUrl}api/manager/workers/count`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -294,7 +294,7 @@ export const getWorkersCount = async (token: any) => {
 
 export const getWorkers = async (token: any) => {
   try {
-    const response = await axios.get(`${apiUrl}api/manager/getWorkers`, {
+    const response = await axios.get(`${apiUrl}api/manager/workers`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -309,7 +309,7 @@ export const getWorkers = async (token: any) => {
 export const updateWorker = async (token: any, payload: any) => {
   try {
     const response = await axios.put(
-      `${apiUrl}api/manager/workers/update`,
+      `${apiUrl}api/manager/workers`,
       payload,
       {
         headers: {
@@ -336,7 +336,21 @@ export const deleteWorker = async (token: any, id: any) => {
 
 export const getUsersCount = async (token: any) => {
   try {
-    const response = await axios.get(`${apiUrl}api/admin/getUsersCount`, {
+    const response = await axios.get(`${apiUrl}api/admin/users/count`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const recentEmployees = async (token: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/admin/employees/recent`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
