@@ -30,7 +30,7 @@ const LoginPageAdmin = () => {
           token: response.data.payload.token,
         })
       );
-      navigate("/pace-team/resourcing/resource-tracker");
+      navigate("/dashboard");
     } else {
     }
   };

@@ -34,7 +34,7 @@ export const managerLogin = async (payload: any) => {
         Authorization: `Bearer ${sessionStorage.getItem("admin_gate_token")}`,
       },
     });
-    return response;
+    return response.data;
   } catch (error) {
     console.log(error);
   }
@@ -361,3 +361,112 @@ export const recentEmployees = async (token: any) => {
     console.log(error);
   }
 };
+
+export const getAttendanceWorkersByDepartment = async (token: any, id: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/manager/attendance/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const checkInAttendanceWorker = async (token: any, payload: any) => {
+  try {
+    const response = await axios.post(`${apiUrl}api/worker/check-in`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const checkOutAttendanceWorker = async (token: any, payload: any) => {
+  try {
+    const response = await axios.post(`${apiUrl}api/worker/check-out`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const checkInAttendanceManager = async (token: any, payload: any) => {
+  try {
+    const response = await axios.post(`${apiUrl}api/manager/check-in`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const checkOutAttendanceManager = async (token: any, payload: any) => {
+  try {
+    const response = await axios.post(`${apiUrl}api/manager/check-out`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const getIfaUserCheckedInManager = async (token: any, id: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/manager/checked-in/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const getIfaUserCheckedInWorker = async (token: any, id: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/worker/checked-in/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const getStatsByDepartmentId = async (token: any, id: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/manager/stats/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
+}

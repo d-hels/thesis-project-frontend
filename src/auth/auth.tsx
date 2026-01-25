@@ -16,8 +16,10 @@ interface User {
     phone?: string;
     address?: string;
     token?: string;
-    departmentId?: number;
-    positionsId?: number;
+    departmentId?: string;
+    positionsId?: string;
+    departmentName?: string;
+    positionsTitle?: string;
     timestamp?: number;
 }
 

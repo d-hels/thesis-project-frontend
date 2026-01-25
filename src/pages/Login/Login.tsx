@@ -18,22 +18,24 @@ const LoginPage = () => {
       password: values.password,
     });
 
-    if (response?.data?.success) {
+    if (response?.success) {
       dispatch(
         setUser({
-          id: response.data.payload.user.id,
-          token: response.data.payload.token,
-          name: response.data.payload.user.first_name,
-          surname: response.data.payload.user.last_name,
-          email: response.data.payload.user.email,
-          role: response.data.payload.user.role,
-          phone: response.data.payload.user.phone,
-          address: response.data.payload.user.address,
-          departmentId: response.data.payload.user.departmentId,
-          positionsId: response.data.payload.user.positionsId,
+          id: response.payload.user.id,
+          token: response.payload.token,
+          name: response.payload.user.first_name,
+          surname: response.payload.user.last_name,
+          email: response.payload.user.email,
+          role: response.payload.user.role,
+          phone: response.payload.user.phone,
+          address: response.payload.user.address,
+          departmentId: response.payload.user.departmentId,
+          positionsId: response.payload.user.positionsId,
+          departmentName: response.payload.user.departmentName,
+          positionsTitle: response.payload.user.positionsTitle,
         })
       );
-      navigate("/pace-team/resourcing/resource-tracker");
+      navigate("/dashboard");
     } else {
       message.error(response?.data.payload);
     }

@@ -1,17 +1,35 @@
-import { Layout, Card, Row, Col, Table, Typography, message } from "antd";
 import {
-  DashboardOutlined,
+  Layout,
+  Card,
+  Row,
+  Col,
+  Table,
+  Typography,
+  message,
+  Space,
+  Alert,
+  Button,
+  Tag,
+} from "antd";
+import {
   TeamOutlined,
-  FileTextOutlined,
-  BellOutlined,
+  CalendarOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { getWorkers, getWorkersCount } from "../../../api/apiCall";
+import {
+  checkInAttendanceManager,
+  checkOutAttendanceManager,
+  getIfaUserCheckedInManager,
+  getWorkers,
+} from "../../../api/apiCall";
 import { useAuth } from "../../../auth/auth";
 import type { ColumnsType } from "antd/es/table";
 
 const { Content } = Layout;
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 type Worker = {
   id: string;
@@ -26,16 +44,28 @@ type Worker = {
   createdAt: string;
 };
 
-const Dashboard = () => {
+const Dashboard = ({ stats }: any) => {
   const { state } = useAuth();
-  const [numberOfEmployees, setNumberOfEmployees] = useState(0);
+  const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [data, setData] = useState<Worker[]>([]);
   const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [attendanceCompleted, setAttendanceCompleted] = useState(false);
 
-  const getWorkersNumber = async () => {
-    const response = await getWorkersCount(state.user?.token);
-    if (response.success) {
-      setNumberOfEmployees(response.payload.employeeCount);
+  const isUserCheckedIn = async () => {
+    const response = await getIfaUserCheckedInManager(
+      state.user?.token,
+      state.user?.id
+    );
+    if (response.success && response.payload === "can_check_in") {
+      setIsCheckedIn(false);
+    } else if (response.success && response.payload === "can_check_out") {
+      setIsCheckedIn(true);
+    } else if (
+      !response.success &&
+      response.payload === "already_checked_in_and_out"
+    ) {
+      setAttendanceCompleted(true);
     }
   };
 
@@ -53,19 +83,6 @@ const Dashboard = () => {
     }
   };
 
-  //   const employeeColumns = [
-  //     {
-  //       title: "Status",
-  //       dataIndex: "status",
-  //       key: "status",
-  //       render: (status: any) => (
-  //         <Badge
-  //           status={status === "Active" ? "success" : "warning"}
-  //           text={status}
-  //         />
-  //       ),
-  //     },
-  //   ];
   const columns: ColumnsType<Worker> = [
     {
       title: "Full Name",
@@ -107,50 +124,173 @@ const Dashboard = () => {
     },
   ];
   // Card stats
-  const stats = [
+  const cardStats = [
     {
       title: "Total Employees",
-      value: numberOfEmployees,
+      value: stats.totalWorkers,
       color: "#40c9c6",
       icon: <TeamOutlined />,
+      change: "+2 this month",
     },
     {
-      title: "Active Projects",
-      value: 15,
+      title: "Attendance Today",
+      value: stats.attendancePercentage + "%",
       color: "#36a2eb",
-      icon: <FileTextOutlined />,
+      icon: <ClockCircleOutlined />,
+      change: "+3% from yesterday",
     },
     {
-      title: "Pending Requests",
-      value: 5,
+      title: "Pending Leaves",
+      value: 0,
       color: "#f6a623",
-      icon: <BellOutlined />,
+      icon: <CalendarOutlined />,
+      change: "Need attention",
     },
     {
-      title: "Completed Tasks",
-      value: 230,
+      title: "Active Now",
+      value: stats.presentWorkers,
       color: "#ff6b6b",
-      icon: <DashboardOutlined />,
+      icon: <CheckCircleOutlined />,
+      change: "85% of workforce",
     },
   ];
 
+  const handleCheckIn = async (date: string) => {
+    setButtonLoading(true);
+    const response = await checkInAttendanceManager(state.user?.token, {
+      userId: state.user?.id,
+      checkIn: date,
+    });
+
+    if (response.success) {
+      setTimeout(() => {
+        setIsCheckedIn(true);
+        message.success("Checked in successfully!");
+        setButtonLoading(false);
+      }, 1000);
+    } else {
+      message.error("An error in the system!");
+      setButtonLoading(false);
+    }
+  };
+
+  const handleCheckOut = async (time: string) => {
+    const response = await checkOutAttendanceManager(state.user?.token, {
+      userId: state.user?.id,
+      checkOut: time,
+    });
+
+    setButtonLoading(true);
+    setTimeout(() => {
+      setAttendanceCompleted(true);
+      message.success("Checked out successfully!");
+      setButtonLoading(false);
+    }, 1000);
+  };
+
   useEffect(() => {
-    getWorkersNumber();
     fetchWorkers();
+    isUserCheckedIn();
   }, []);
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Layout>
-        <Content style={{ margin: "24px", overflow: "initial" }}>
+        <Content style={{ margin: "20px", overflow: "initial" }}>
+          <Card
+            style={{
+              marginBottom: 12,
+              borderRadius: 12,
+              borderColor: "1px solid gray",
+              color: "#fff",
+            }}
+          >
+            <Row gutter={[16, 16]} style={{ marginBottom: "0px" }}>
+              <Col span={24}>
+                <Row align="middle" gutter={24}>
+                  <Col flex={1}>
+                    <Title level={3} style={{ marginBottom: 4 }}>
+                      <span
+                        style={{ display: "inline-flex", alignItems: "center" }}
+                      >
+                        {state.user?.name} {state.user?.surname}
+                        <Tag color="blue" style={{ marginLeft: 8 }}>
+                          {state.user?.positionsTitle}
+                        </Tag>
+                      </span>
+                    </Title>
+                    <Paragraph type="secondary">
+                      {state.user?.departmentName} • ID:
+                    </Paragraph>
+                  </Col>
+                  <Col span={12} style={{ textAlign: "right" }}>
+                    {attendanceCompleted ? (
+                      <Space direction="vertical" size="middle">
+                        <Alert
+                          message="Attendance completed"
+                          style={{ alignItems: "center" }}
+                          type="success"
+                          showIcon
+                        />
+                      </Space>
+                    ) : isCheckedIn ? (
+                      <Space direction="vertical" size="middle">
+                        <Alert
+                          message="Currently Checked In"
+                          style={{ alignItems: "center" }}
+                          type="success"
+                          showIcon
+                        />
+                        <Button
+                          type="primary"
+                          danger
+                          icon={<LogoutOutlined />}
+                          loading={buttonLoading}
+                          onClick={() => {
+                            const time = new Date().toLocaleTimeString(
+                              "en-GB",
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            );
+                            handleCheckOut(time);
+                          }}
+                          size="large"
+                        >
+                          Check Out
+                        </Button>
+                      </Space>
+                    ) : (
+                      <Button
+                        type="primary"
+                        icon={<CheckCircleOutlined />}
+                        loading={buttonLoading}
+                        onClick={() => {
+                          const time = new Date().toLocaleTimeString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          });
+                          handleCheckIn(time);
+                        }}
+                        size="large"
+                      >
+                        Check In
+                      </Button>
+                    )}
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Card>
           <Row gutter={[24, 24]} style={{ marginBottom: 24 }}>
-            {stats.map((stat) => (
+            {cardStats.map((stat) => (
               <Col xs={24} sm={12} md={6} key={stat.title}>
                 <Card
                   style={{
                     borderRadius: 12,
                     background: stat.color,
-                    color: "#fff",
+                    color: "rgba(255,255,255,0.8)",
                     boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                   }}
                   bodyStyle={{
@@ -163,9 +303,17 @@ const Dashboard = () => {
                     <Text style={{ color: "#fff", fontWeight: 500 }}>
                       {stat.title}
                     </Text>
-                    <Title level={2} style={{ color: "#fff", margin: 0 }}>
+                    <Title
+                      level={2}
+                      style={{ color: "rgba(255,255,255,0.8)", margin: 0 }}
+                    >
                       {stat.value}
                     </Title>
+                    <Text
+                      style={{ color: "rgba(255,255,255,0.8)", fontSize: 12 }}
+                    >
+                      {stat.change}
+                    </Text>
                   </div>
                   <div style={{ fontSize: 32, opacity: 0.7 }}>{stat.icon}</div>
                 </Card>

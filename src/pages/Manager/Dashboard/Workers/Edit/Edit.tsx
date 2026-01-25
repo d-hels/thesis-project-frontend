@@ -31,12 +31,12 @@ const EditWorkerModal = ({
   onCancel,
   onSubmit,
 }: Props) => {
-    const {state} = useAuth();
+  const {state} = useAuth();
   const [form] = Form.useForm();
   const [positions, setPositions] = useState<any[]>([]);
   const [loadingPositions, setLoadingPositions] = useState(false);
 
-  const fetchPositions = async (departmentId: number) => {
+  const fetchPositions = async (departmentId: any) => {
     setLoadingPositions(true);
     const response = await getPositionsByDepartment(
       state.user?.token,
@@ -68,12 +68,13 @@ const EditWorkerModal = ({
         address: user.address,
         departmentId: user.departmentId,
       });
-    }
+    };
+    fetchPositions(state.user?.departmentId)
   }, [user, form]);
 
   return (
     <Modal
-      title="Edit User"
+      title="Edit Employee"
       open={open}
       onCancel={onCancel}
       onOk={() => form.submit()}

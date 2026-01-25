@@ -23,22 +23,22 @@ const AppLayout = () => {
     switch (activeMenu) {
       case "dashboard":
         return <AdminDashboard />;
-  
+
       case "users-list":
         return <UsersTable />;
-  
+
       case "createUser":
         return <CreateAdminForm setActiveMenu={setActiveMenu} />;
-  
+
       case "departments":
         return <DepartmentsTable />;
-  
+
       case "positions":
         return <PositionsTable />;
 
         case "myProfile":
         return <MyProfile />;
-  
+
       default:
         return null;
     }

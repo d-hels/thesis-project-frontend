@@ -10,6 +10,7 @@ import AppLayout from "./pages/Manager/Layout/Layout";
 import AdminGate from "./pages/Admin/AdminGate/AdminGate";
 import AdminGateRoute from "./pages/Admin/AdminGate/AdminRoute";
 import LoginPageAdmin from "./pages/Login/AdminLogin/AdminLogin";
+import WorkerDashboard from "./pages/Worker/Dashboard/WorkerDashboard";
 
 const App = () => {
   const { state } = useAuth();
@@ -31,6 +32,11 @@ const App = () => {
           <Route path="/dashboard" element={<AppLayout />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      )}
+      {state.user?.token && state?.user?.role === "worker" && (
+        <Routes>
+          <Route path="/dashboard" element={<WorkerDashboard />} />
         </Routes>
       )}
       {!state.user?.token && (

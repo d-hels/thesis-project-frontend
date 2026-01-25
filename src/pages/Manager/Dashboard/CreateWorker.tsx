@@ -55,7 +55,7 @@ const CreateWorkersForm = () => {
     }
   };
 
-  const fetchPositions = async (departmentId: number) => {
+  const fetchPositions = async (departmentId: any) => {
     setLoadingPositions(true);
     const response = await getPositionsByDepartment(
       state.user?.token,
