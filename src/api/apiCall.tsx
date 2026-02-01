@@ -42,15 +42,11 @@ export const managerLogin = async (payload: any) => {
 
 export const createAdmin = async (token: any, payload: any) => {
   try {
-    const response = await axios.post(
-      `${apiUrl}api/admin/create`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.post(`${apiUrl}api/admin/create`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     return response;
   } catch (error) {
@@ -60,15 +56,11 @@ export const createAdmin = async (token: any, payload: any) => {
 
 export const createWorker = async (token: any, payload: any) => {
   try {
-    const response = await axios.post(
-      `${apiUrl}api/manager/workers`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.post(`${apiUrl}api/manager/workers`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     return response;
   } catch (error) {
@@ -110,15 +102,11 @@ export const updateUser = async (token: any, payload: any) => {
 
 export const updateMyProfile = async (token: any, payload: any) => {
   try {
-    const response = await axios.put(
-      `${apiUrl}api/admin/users/me`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.put(`${apiUrl}api/admin/users/me`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     return response.data;
   } catch (error: any) {
@@ -250,14 +238,11 @@ export const updatePosition = async (token: any, payload: any) => {
 };
 
 export const deletePosition = async (token: any, id: any) => {
-  const response = await axios.delete(
-    `${apiUrl}api/manager/positions/${id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const response = await axios.delete(`${apiUrl}api/manager/positions/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   return response.data;
 };
@@ -266,7 +251,7 @@ export const getPositionsByDepartment = async (
   token: undefined | string,
   id?: number
 ) => {
-  const res = await axios.get(
+  const response = await axios.get(
     `${apiUrl}api/manager/departments/${id}/positions`,
     {
       headers: {
@@ -275,7 +260,7 @@ export const getPositionsByDepartment = async (
     }
   );
 
-  return res.data;
+  return response.data;
 };
 
 export const getWorkersCount = async (token: any) => {
@@ -308,15 +293,11 @@ export const getWorkers = async (token: any) => {
 
 export const updateWorker = async (token: any, payload: any) => {
   try {
-    const response = await axios.put(
-      `${apiUrl}api/manager/workers`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.put(`${apiUrl}api/manager/workers`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     return response.data;
   } catch (error: any) {
@@ -368,13 +349,13 @@ export const getAttendanceWorkersByDepartment = async (token: any, id: any) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    })
+    });
 
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 export const checkInAttendanceWorker = async (token: any, payload: any) => {
   try {
@@ -382,52 +363,64 @@ export const checkInAttendanceWorker = async (token: any, payload: any) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    })
+    });
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 export const checkOutAttendanceWorker = async (token: any, payload: any) => {
   try {
-    const response = await axios.post(`${apiUrl}api/worker/check-out`, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    const response = await axios.post(
+      `${apiUrl}api/worker/check-out`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 export const checkInAttendanceManager = async (token: any, payload: any) => {
   try {
-    const response = await axios.post(`${apiUrl}api/manager/check-in`, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    const response = await axios.post(
+      `${apiUrl}api/manager/check-in`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 export const checkOutAttendanceManager = async (token: any, payload: any) => {
   try {
-    const response = await axios.post(`${apiUrl}api/manager/check-out`, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    const response = await axios.post(
+      `${apiUrl}api/manager/check-out`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 export const getIfaUserCheckedInManager = async (token: any, id: any) => {
   try {
@@ -435,13 +428,13 @@ export const getIfaUserCheckedInManager = async (token: any, id: any) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    })
+    });
 
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 export const getIfaUserCheckedInWorker = async (token: any, id: any) => {
   try {
@@ -449,13 +442,13 @@ export const getIfaUserCheckedInWorker = async (token: any, id: any) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    })
+    });
 
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 export const getStatsByDepartmentId = async (token: any, id: any) => {
   try {
@@ -463,10 +456,140 @@ export const getStatsByDepartmentId = async (token: any, id: any) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    })
+    });
 
     return response.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
+
+export const getDepartmentAttendanceByDateRange = async (
+  token: string | undefined,
+  id: string | undefined,
+  startDate: string,
+  endDate: string
+) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}api/manager/department/${id}/attendance`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          startDate,
+          endDate,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getWorkersByDepartmentId = async (token: any, id: any) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}api/manager/departments/workers/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getContracts = async (token: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/manager/contracts`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const createContract = async (token: any, payload: any) => {
+  try {
+    const response = await axios.post(
+      `${apiUrl}api/manager/contracts`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateContract = async (token: any, payload: any) => {
+  try {
+    const response = await axios.put(
+      `${apiUrl}api/manager/contracts`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error;
+  }
+};
+
+export const sendContractPdfToUser = async (
+  token: any,
+  contractId: string | number,
+) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}api/manager/contracts/send-pdf/${contractId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error;
+  }
+};
+
+export const updateUserStatus = async (token: any, id: any, isActive: any) => {
+  try {
+    const response = await axios.put(
+      `${apiUrl}api/admin/users/update/status/${id}`,
+      {isActive},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error;
+  }
+};

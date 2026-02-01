@@ -8,6 +8,7 @@ type User = {
   email: string;
   phone: string;
   address: string;
+  role: string;
   departmentId: number;
 };
 
@@ -36,6 +37,7 @@ const EditUserModal = ({
         email: user.email,
         phone: user.phone,
         address: user.address,
+        role: user.role,
         departmentId: user.departmentId,
       });
     }
@@ -86,6 +88,18 @@ const EditUserModal = ({
         <Form.Item label="Address" name="address">
           <Input />
         </Form.Item>
+
+            <Form.Item
+              name="role"
+              label="Role"
+              rules={[{ required: true, message: "Please select a role" }]}
+            >
+              <Select placeholder="Select Role">
+                <Select.Option value="worker">Worker</Select.Option>
+                <Select.Option value="manager">Manager</Select.Option>
+                <Select.Option value="admin">Admin</Select.Option>
+              </Select>
+            </Form.Item>
 
         <Form.Item
           label="Department"

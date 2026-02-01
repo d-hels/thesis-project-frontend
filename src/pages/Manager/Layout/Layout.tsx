@@ -1,5 +1,5 @@
 import { Layout, Menu } from "antd";
-import { CalendarOutlined, DashboardOutlined, TeamOutlined } from "@ant-design/icons";
+import { CalendarOutlined, DashboardOutlined, FileTextOutlined, TeamOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import Dashboard from "../Dashboard/Dashboard";
 import HeaderBar from "./Header";
@@ -9,6 +9,7 @@ import MyProfile from "../../Profile/Profile";
 import AttendanceDashboard from "../Dashboard/Attendance/Attendace";
 import { getStatsByDepartmentId } from "../../../api/apiCall";
 import { useAuth } from "../../../auth/auth";
+import Contracts from "../../Contracts";
 
 const { Sider, Content } = Layout;
 
@@ -16,7 +17,7 @@ const AppLayout = () => {
   const {state} = useAuth();
   const [activeMenu, setActiveMenu] = useState("dashboard");
   const [collapsed, setCollapsed] = useState(false);
-  const [stats, setStats] = useState(false);
+  const [stats, setStats] = useState<any>([]);
 
   const getStats = async () => {
     const response = await getStatsByDepartmentId(state.user?.token, state.user?.departmentId);
@@ -41,8 +42,10 @@ const AppLayout = () => {
         return <CreateWorkersForm />;
       case "myProfile":
         return <MyProfile />;
-        case "attendance":
-        return <AttendanceDashboard />;
+      case "attendance":
+        return <AttendanceDashboard stats={stats} />;
+      case "contracts":
+        return <Contracts/>;
       default:
         return null;
     }
@@ -100,10 +103,15 @@ const AppLayout = () => {
               ],
             },
             {
-            key: "attendance",
-            icon: <CalendarOutlined />,
-            label: "Attendance",
-          },
+              key: "attendance",
+              icon: <CalendarOutlined />,
+              label: "Attendance",
+            },
+            {
+              key: "contracts",
+              icon: <FileTextOutlined />,
+              label: "Contracts",
+            },
           ]}
         />
       </Sider>

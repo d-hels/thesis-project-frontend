@@ -28,7 +28,7 @@ import {
 import moment from "moment";
 import {
   getAttendanceWorkersByDepartment,
-  getWorkersCount,
+  getDepartmentAttendanceByDateRange,
 } from "../../../../api/apiCall";
 import { useAuth } from "../../../../auth/auth";
 
@@ -36,7 +36,7 @@ const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-const AttendanceDashboard: React.FC = () => {
+const AttendanceDashboard: React.FC = ({ stats }: any) => {
   const { state } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [attendanceData, setAttendanceData] = useState([]);
@@ -44,7 +44,6 @@ const AttendanceDashboard: React.FC = () => {
   const [dateRange, setDateRange] = useState<any>(null);
   const [searchText, setSearchText] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [numberOfEmployees, setNumberOfEmployees] = useState(0);
 
   const getAttendanceData = async () => {
     const response = await getAttendanceWorkersByDepartment(
@@ -52,13 +51,6 @@ const AttendanceDashboard: React.FC = () => {
       state.user?.departmentId
     );
     setAttendanceData(response.payload);
-  };
-
-  const getWorkersNumber = async () => {
-    const response = await getWorkersCount(state.user?.token);
-    if (response.success) {
-      setNumberOfEmployees(response.payload.employeeCount);
-    }
   };
 
   const calculateStats = () => {
@@ -81,8 +73,18 @@ const AttendanceDashboard: React.FC = () => {
     return { activeCount, lateCount, absentCount, totalWorkers };
   };
 
-  const stats = calculateStats();
+  const statistics = calculateStats();
 
+  const filterByDate = async () => {
+    if (dateRange?.length === 2) {
+      const start = dateRange[0].format("YYYY-MM-DD");
+      const end = dateRange[1].format("YYYY-MM-DD");
+    const response = await getDepartmentAttendanceByDateRange(state.user?.token, state.user?.departmentId, start, end )
+    setFilteredData(response.payload)
+    }
+  }
+
+useEffect(() => {filterByDate();}, [dateRange])
   // Filter data based on search and filters
   useEffect(() => {
     let filtered: any = [...attendanceData];
@@ -100,6 +102,20 @@ const AttendanceDashboard: React.FC = () => {
         return itemDate.isBetween(dateRange[0], dateRange[1], "day", "[]");
       });
     }
+
+    // if (dateRange?.length === 2) {
+    //   const start = dateRange[0].format("YYYY-MM-DD");
+    //   const end = dateRange[1].format("YYYY-MM-DD");
+    
+    //   filtered = filtered.filter((item: any) => {
+    //     const itemDate = moment(item.createdAt).format("YYYY-MM-DD");
+    
+    //     return (
+    //       itemDate >= start &&
+    //       itemDate <= end
+    //     );
+    //   });
+    // }
 
     // Filter by status
     if (statusFilter !== "all") {
@@ -120,7 +136,6 @@ const AttendanceDashboard: React.FC = () => {
 
   useEffect(() => {
     getAttendanceData();
-    getWorkersNumber();
   }, []);
 
   const columns = [
@@ -225,14 +240,14 @@ const AttendanceDashboard: React.FC = () => {
         return "-";
       },
     },
-    {
-      title: "Last Updated",
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      render: (timestamp: string) => moment(timestamp).format("hh:mm A"),
-      sorter: (a: any, b: any) =>
-        moment(a.updatedAt).unix() - moment(b.updatedAt).unix(),
-    },
+    // {
+    //   title: "Last Updated",
+    //   dataIndex: "updatedAt",
+    //   key: "updatedAt",
+    //   render: (timestamp: string) => moment(timestamp).format("hh:mm A"),
+    //   sorter: (a: any, b: any) =>
+    //     moment(a.updatedAt).unix() - moment(b.updatedAt).unix(),
+    // },
   ];
 
   const handleExportData = () => {
@@ -273,7 +288,7 @@ const AttendanceDashboard: React.FC = () => {
               value={attendanceData.length}
               prefix={<CheckCircleOutlined style={{ color: "#52c41a" }} />}
               valueStyle={{ color: "#52c41a" }}
-              suffix={`/ ${numberOfEmployees}`}
+              suffix={`/ ${stats.totalWorkers}`}
             />
           </Card>
         </Col>
@@ -281,7 +296,7 @@ const AttendanceDashboard: React.FC = () => {
           <Card>
             <Statistic
               title="Currently Active"
-              value={attendanceData.length}
+              value={stats.presentWorkers}
               prefix={<ClockCircleOutlined style={{ color: "#1890ff" }} />}
               valueStyle={{ color: "#1890ff" }}
             />
@@ -291,7 +306,7 @@ const AttendanceDashboard: React.FC = () => {
           <Card>
             <Statistic
               title="Late Arrivals"
-              value={stats.lateCount}
+              value={statistics.lateCount}
               prefix={<ClockCircleOutlined style={{ color: "#faad14" }} />}
               valueStyle={{ color: "#faad14" }}
             />
@@ -301,7 +316,7 @@ const AttendanceDashboard: React.FC = () => {
           <Card>
             <Statistic
               title="Absent Today"
-              value={stats.absentCount}
+              value={stats.absentWorkers}
               prefix={<CloseCircleOutlined style={{ color: "#ff4d4f" }} />}
               valueStyle={{ color: "#ff4d4f" }}
             />

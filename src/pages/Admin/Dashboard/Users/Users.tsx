@@ -15,6 +15,7 @@ import {
   getDepartments,
   getUsers,
   updateUser,
+  updateUserStatus,
 } from "../../../../api/apiCall";
 import EditUserModal from "./EditUserModal/EditUserModal";
 
@@ -29,6 +30,8 @@ type User = {
   departmentId: number;
   departmentName: string;
   createdAt: string;
+  isActive: boolean;
+  status: string;
 };
 
 const UsersTable = () => {
@@ -64,6 +67,7 @@ const UsersTable = () => {
   }, []);
 
   const openEditModal = (user: User) => {
+    console.log(user,'us')
     setEditingUser(user);
     setOpen(true);
   };
@@ -95,6 +99,28 @@ const UsersTable = () => {
       message.error("An error occurred");
       console.error(error);
     }
+  };
+
+  const setUserStatus = async (user: User) => {
+    const response = await updateUserStatus(state.user?.token, user.id, !user.isActive);
+    console.log(response)
+    if(response.success) {
+      fetchUsers();
+    }
+  }
+
+  const showSetUserStatus = (user: User) => {
+    Modal.confirm({
+      title: "Are you sure?",
+      icon: <ExclamationCircleOutlined />,
+      content: `This action will ${user.isActive? 'deactivate' : 'activate'} the user.`,
+      okText: "Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk() {
+        setUserStatus(user);
+      },
+    });
   };
 
   const showDeleteConfirm = (id: string) => {
@@ -136,12 +162,6 @@ const UsersTable = () => {
       ellipsis: true,
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-      ellipsis: true,
-    },
-    {
       title: "Department Name",
       dataIndex: "departmentName",
       key: "departmentName",
@@ -164,6 +184,39 @@ const UsersTable = () => {
       key: "createdAt",
       render: (date: string) =>
         format(new Date(date), "dd/MM/yyyy"),
+    },
+    {
+      title: "Last Login",
+      dataIndex: "lastLoginAt",
+      key: "lastLoginAt",
+      render: (date: string) =>
+        format(new Date(date), "dd/MM/yyyy HH:mm"),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, { status }) => {
+        let color = "blue";
+        if (status === "active") color = "green";
+        if (status === "suspended") color = "red";
+
+        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+      },
+    },
+    {
+      title: "Active",
+      key: "isActive",
+      render: (_, record) => {
+        return <Button type="link" danger={record.isActive}
+        onClick={() => {showSetUserStatus(record)}}>
+          {record.isActive ? (
+           'Deactivate'
+          ): (
+           'Activate'
+          )}
+          </Button>
+      },
     },
     {
       title: "Actions",
