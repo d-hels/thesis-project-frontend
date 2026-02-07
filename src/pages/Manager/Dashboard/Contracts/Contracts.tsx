@@ -33,8 +33,8 @@ import {
   getWorkersByDepartmentId,
   sendContractPdfToUser,
   updateContract,
-} from "../api/apiCall";
-import { useAuth } from "../auth/auth";
+} from "../../../../api/apiCall";
+import { useAuth } from "../../../../auth/auth";
 
 const { Title, Text } = Typography;
 const { Option } = Select;

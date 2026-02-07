@@ -13,9 +13,11 @@ import {
     deleteWorker,
   getDepartments,
   getWorkers,
+  transferUserToDepartment,
   updateWorker,
 } from "../../../../api/apiCall";
 import EditWorkerModal from "./Edit/Edit";
+import TransferWorkerModal from "./Transfer/Transfer";
 
 type User = {
   id: string;
@@ -36,6 +38,7 @@ const EmployeesTable = () => {
   const [data, setData] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [isOpenTransferModal, setIsOpenTransferModal] = useState(false);
   const [departments, setDepartments] = useState<any[]>([]);
   const [editingUser, setEditingUser] = useState<User | null>(null);
 
@@ -69,6 +72,11 @@ const EmployeesTable = () => {
     setOpen(true);
   };
 
+  const openTransferModal = (user: User) => {
+    setEditingUser(user);
+    setIsOpenTransferModal(true);
+  };
+
   const handleUpdateUser = async (values: any) => {
     try {
       if (!editingUser) return;
@@ -80,6 +88,24 @@ const EmployeesTable = () => {
 
       message.success("User updated successfully");
       setOpen(false);
+      setEditingUser(null);
+      fetchUsers();
+    } catch {
+      message.error("Failed to update user");
+    }
+  };
+
+  const handleTransferUser = async (values: any) => {
+    try {
+      if (!editingUser) return;
+
+      await transferUserToDepartment(state.user?.token, {
+        id: editingUser.id,
+        ...values,
+      });
+
+      message.success("User updated successfully");
+      setIsOpenTransferModal(false);
       setEditingUser(null);
       fetchUsers();
     } catch {
@@ -161,6 +187,15 @@ const EmployeesTable = () => {
         format(new Date(date), "dd/MM/yyyy"),
     },
     {
+      title: "Transfer",
+      dataIndex: "transfer",
+      key: "transfer",
+      render: (date: string, record: any) =>
+        <Button type="link" onClick={() => openTransferModal(record)}>
+            Transfer
+          </Button>
+    },
+    {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
@@ -202,6 +237,17 @@ const EmployeesTable = () => {
           setEditingUser(null);
         }}
         onSubmit={handleUpdateUser}
+      />
+
+      <TransferWorkerModal
+        open={isOpenTransferModal}
+        user={editingUser}
+        departments={departments}
+        onCancel={() => {
+          setIsOpenTransferModal(false);
+          setEditingUser(null);
+        }}
+        onSubmit={handleTransferUser}
       />
     </>
   );

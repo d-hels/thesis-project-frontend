@@ -23,6 +23,7 @@ import {
   checkInAttendanceManager,
   checkOutAttendanceManager,
   getIfaUserCheckedInManager,
+  getStatsByDepartmentId,
   getWorkers,
 } from "../../../api/apiCall";
 import { useAuth } from "../../../auth/auth";
@@ -44,13 +45,21 @@ type Worker = {
   createdAt: string;
 };
 
-const Dashboard = ({ stats }: any) => {
+const ManagerDashboard = () => {
   const { state } = useAuth();
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [data, setData] = useState<Worker[]>([]);
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [attendanceCompleted, setAttendanceCompleted] = useState(false);
+  const [stats, setStats] = useState<any>([]);
+
+  const getStats = async () => {
+    const response = await getStatsByDepartmentId(state.user?.token, state.user?.departmentId);
+    if(response.success) { 
+      setStats(response.payload)
+    }
+  }
 
   const isUserCheckedIn = async () => {
     const response = await getIfaUserCheckedInManager(
@@ -191,6 +200,7 @@ const Dashboard = ({ stats }: any) => {
   useEffect(() => {
     fetchWorkers();
     isUserCheckedIn();
+    getStats();
   }, []);
 
   return (
@@ -341,4 +351,4 @@ const Dashboard = ({ stats }: any) => {
   );
 };
 
-export default Dashboard;
+export default ManagerDashboard;

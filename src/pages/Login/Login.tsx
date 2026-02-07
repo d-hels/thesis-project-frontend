@@ -19,23 +19,24 @@ const LoginPage = () => {
     });
 
     if (response?.success) {
+      const user = response.payload.user;
       dispatch(
         setUser({
-          id: response.payload.user.id,
+          id: user.id,
           token: response.payload.token,
-          name: response.payload.user.first_name,
-          surname: response.payload.user.last_name,
-          email: response.payload.user.email,
-          role: response.payload.user.role,
-          phone: response.payload.user.phone,
-          address: response.payload.user.address,
-          departmentId: response.payload.user.departmentId,
-          positionsId: response.payload.user.positionsId,
-          departmentName: response.payload.user.departmentName,
-          positionsTitle: response.payload.user.positionsTitle,
+          name: user.first_name,
+          surname: user.last_name,
+          email: user.email,
+          role: user.role,
+          phone: user.phone,
+          address: user.address,
+          departmentId: user.departmentId,
+          positionsId: user.positionsId,
+          departmentName: user.departmentName,
+          positionsTitle: user.positionsTitle,
         })
       );
-      navigate("/dashboard");
+      if(user.role === 'manager') navigate("/manager");
     } else {
       message.error(response?.data.payload);
     }

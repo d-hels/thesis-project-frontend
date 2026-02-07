@@ -1,62 +1,25 @@
 import { Layout, Menu } from "antd";
-import { CalendarOutlined, DashboardOutlined, FileTextOutlined, TeamOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
-import Dashboard from "../Dashboard/Dashboard";
-import HeaderBar from "./Header";
-import CreateWorkersForm from "../Dashboard/CreateWorker";
-import EmployeesTable from "../Dashboard/Workers/Workers";
-import MyProfile from "../../Profile/Profile";
-import AttendanceDashboard from "../Dashboard/Attendance/Attendace";
-import { getStatsByDepartmentId } from "../../../api/apiCall";
-import { useAuth } from "../../../auth/auth";
-import Contracts from "../../Contracts";
+import {
+  DashboardOutlined,
+  TeamOutlined,
+  CalendarOutlined,
+  FileTextOutlined,
+} from "@ant-design/icons";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import HeaderBar from "../../Manager/Layout/Header";
 
 const { Sider, Content } = Layout;
 
-const AppLayout = () => {
-  const {state} = useAuth();
-  const [activeMenu, setActiveMenu] = useState("dashboard");
-  const [collapsed, setCollapsed] = useState(false);
-  const [stats, setStats] = useState<any>([]);
+const AdminLayout = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const getStats = async () => {
-    const response = await getStatsByDepartmentId(state.user?.token, state.user?.departmentId);
-    if(response.success) { 
-      setStats(response.payload)
-    }
-  }
-
-  useEffect(() => {
-    getStats();
-  }, [])
-
-  const toggleCollapsed = () => setCollapsed(!collapsed);
-
-  const renderContent = () => {
-    switch (activeMenu) {
-      case "dashboard":
-        return <Dashboard stats={stats} />;
-      case "users-list":
-        return <EmployeesTable />;
-      case "createUser":
-        return <CreateWorkersForm />;
-      case "myProfile":
-        return <MyProfile />;
-      case "attendance":
-        return <AttendanceDashboard stats={stats} />;
-      case "contracts":
-        return <Contracts/>;
-      default:
-        return null;
-    }
-  };
+  const selectedKey = location.pathname.replace("/manager/", "");
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider
+       <Sider
         collapsible
-        collapsed={collapsed}
-        onCollapse={toggleCollapsed}
         theme="light"
         style={{
           borderRight: 1,
@@ -73,17 +36,17 @@ const AppLayout = () => {
             fontSize: 20,
           }}
         >
-          {collapsed ? "WS" : "Employvia"}
+          Employvia
         </div>
 
         <Menu
           theme="light"
           mode="inline"
-          selectedKeys={[activeMenu]}
-          onClick={({ key }) => setActiveMenu(key)}
+          selectedKeys={[selectedKey]}
+          onClick={({ key }) => navigate(`/manager/${key}`)}
           items={[
             {
-              key: "dashboard",
+              key: "home",
               icon: <DashboardOutlined />,
               label: "Dashboard",
             },
@@ -93,11 +56,11 @@ const AppLayout = () => {
               label: "Employees",
               children: [
                 {
-                  key: "users-list",
+                  key: "employees",
                   label: "All Employees",
                 },
                 {
-                  key: "createUser",
+                  key: "employees/create",
                   label: "Create Employee",
                 },
               ],
@@ -123,12 +86,13 @@ const AppLayout = () => {
             borderRadius: 8,
           }}
         >
-          <HeaderBar title={"Dashboard"} setActiveMenu={setActiveMenu} />
-          {renderContent()}
+        <HeaderBar title={"Dashboard"}/>
+          {/* 🔥 ROUTED CONTENT */}
+          <Outlet />
         </Content>
       </Layout>
     </Layout>
   );
 };
 
-export default AppLayout;
+export default AdminLayout;

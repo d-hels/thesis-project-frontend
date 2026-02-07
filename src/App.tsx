@@ -1,60 +1,101 @@
+import './App.css'
 import { Navigate, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/Login/Login";
-import "./App.css";
-import { useAuth } from "./auth/auth";
-import DepartmentsTable from "./pages/Department/DepartmentsTable";
-import CreateAdminForm from "./pages/Admin/Dashboard/Users/Create/CreateAdmin";
-import Dashboard from "./pages/Admin/Dashboard/DashboardLayout";
-import PositionsTable from "./pages/Positions/PositionTable";
-import AppLayout from "./pages/Manager/Layout/Layout";
-import AdminGate from "./pages/Admin/AdminGate/AdminGate";
-import AdminGateRoute from "./pages/Admin/AdminGate/AdminRoute";
 import LoginPageAdmin from "./pages/Login/AdminLogin/AdminLogin";
+
+import DepartmentsTable from "./pages/Department/DepartmentsTable";
+import PositionsTable from "./pages/Positions/PositionTable";
+import UsersTable from "./pages/Admin/Dashboard/Users/Users";
+import CreateAdminForm from "./pages/Admin/Dashboard/Users/Create/CreateAdmin";
+import Dashboard from "./pages/Admin/Dashboard/Dashboard";
+import AdminLayout from "./pages/Admin/Dashboard/AdminLayout";
+
+import AppLayout from "./pages/Manager/Layout/Layout";
 import WorkerDashboard from "./pages/Worker/Dashboard/WorkerDashboard";
 
-const App = () => {
-  const { state } = useAuth();
+import AdminGate from "./pages/Admin/AdminGate/AdminGate";
+import AdminGateRoute from "./pages/Admin/AdminGate/AdminRoute";
 
+import RequireAuth from "./routes/RequireAuth";
+import RequireRole from "./routes/RequireRole";
+import AttendanceDashboard from './pages/Manager/Dashboard/Attendance/Attendance';
+import ManagerDashboard from './pages/Manager/Dashboard/ManagerDashboard';
+import Contracts from './pages/Manager/Dashboard/Contracts/Contracts';
+import EmployeesTable from './pages/Manager/Dashboard/Workers/Workers';
+import CreateWorkersForm from './pages/Manager/Dashboard/CreateWorker';
+import EmployeeProfilePage from './pages/Admin/Dashboard/Users/Profile/Profile';
+
+const App = () => {
   return (
-    <>
-      {state.user?.token && state?.user?.role === "admin" && (
-        <Routes>
-          <Route path="/create-department" element={<DepartmentsTable />} />
-          <Route path="/create-position" element={<PositionsTable />} />
-          <Route path="/create-admin" element={<CreateAdminForm />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      )}
-      {state.user?.token && state?.user?.role === "manager" && (
-        <Routes>
-          <Route path="/dashboard" element={<AppLayout />} />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      )}
-      {state.user?.token && state?.user?.role === "worker" && (
-        <Routes>
-          <Route path="/dashboard" element={<WorkerDashboard />} />
-        </Routes>
-      )}
-      {!state.user?.token && (
-        <Routes>
-          <Route path="/admin" element={<AdminGate />} />
-          <Route
-            path="/admin/login"
-            element={
-              <AdminGateRoute>
-                <LoginPageAdmin />
-              </AdminGateRoute>
-            }
-          />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      )}
-    </>
+    <Routes>
+      {/* ================= PUBLIC ================= */}
+      <Route path="/login" element={<LoginPage />} />
+
+      <Route path="/admin" element={<AdminGate />} />
+      <Route
+        path="/admin/login"
+        element={
+          <AdminGateRoute>
+            <LoginPageAdmin />
+          </AdminGateRoute>
+        }
+      />
+
+      {/* ================= ADMIN ================= */}
+      <Route
+        path="/dashboard"
+        element={
+          <RequireAuth>
+            <RequireRole role="admin">
+              <AdminLayout />
+            </RequireRole>
+          </RequireAuth>
+        }
+      >
+        <Route index element={<Navigate to="home" replace />} />
+        <Route path="home" element={<Dashboard />} />
+        <Route path="users" element={<UsersTable />} />
+        <Route path="users/create" element={<CreateAdminForm />} />
+        <Route path="users/profile/:id" element={<EmployeeProfilePage />} />
+        <Route path="departments" element={<DepartmentsTable />} />
+        <Route path="positions" element={<PositionsTable />} />
+      </Route>
+
+      {/* ================= MANAGER ================= */}
+      <Route
+        path="/manager"
+        element={
+          <RequireAuth>
+            <RequireRole role="manager">
+              <AppLayout />
+            </RequireRole>
+          </RequireAuth>
+        }
+      >
+        <Route index element={<Navigate to="home" replace />} />
+        <Route path="home" element={<ManagerDashboard />} />
+        <Route path="employees" element={<EmployeesTable />} />
+        <Route path="employees/create" element={<CreateWorkersForm />} />
+        <Route path="attendance" element={<AttendanceDashboard />} />
+        <Route path="contracts" element={<Contracts />} />
+      </Route>
+
+      {/* ================= WORKER ================= */}
+      <Route
+        path="/worker"
+        element={
+          <RequireAuth>
+            <RequireRole role="worker">
+              <WorkerDashboard />
+            </RequireRole>
+          </RequireAuth>
+        }
+      />
+
+      {/* ================= DEFAULT ================= */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
   );
 };
 

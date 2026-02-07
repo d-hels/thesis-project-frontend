@@ -5,44 +5,16 @@ import {
   ApartmentOutlined,
   SolutionOutlined,
 } from "@ant-design/icons";
-import { useState } from "react";
-import CreateAdminForm from "./Users/Create/CreateAdmin";
-import UsersTable from "./Users/Users";
-import DepartmentsTable from "../../Department/DepartmentsTable";
-import PositionsTable from "../../Positions/PositionTable";
-import AdminDashboard from "./Dashboard";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import HeaderBar from "../../Manager/Layout/Header";
-import MyProfile from "../../Profile/Profile";
 
 const { Sider, Content } = Layout;
 
-const AppLayout = () => {
-  const [activeMenu, setActiveMenu] = useState("dashboard");
+const AdminLayout = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const renderContent = () => {
-    switch (activeMenu) {
-      case "dashboard":
-        return <AdminDashboard />;
-
-      case "users-list":
-        return <UsersTable />;
-
-      case "createUser":
-        return <CreateAdminForm setActiveMenu={setActiveMenu} />;
-
-      case "departments":
-        return <DepartmentsTable />;
-
-      case "positions":
-        return <PositionsTable />;
-
-        case "myProfile":
-        return <MyProfile />;
-
-      default:
-        return null;
-    }
-  };
+  const selectedKey = location.pathname.replace("/dashboard/", "");
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -62,11 +34,11 @@ const AppLayout = () => {
         <Menu
           theme="dark"
           mode="inline"
-          selectedKeys={[activeMenu]}
-          onClick={({ key }) => setActiveMenu(key)}
+          selectedKeys={[selectedKey]}
+          onClick={({ key }) => navigate(`/dashboard/${key}`)}
           items={[
             {
-              key: "dashboard",
+              key: "home",
               icon: <DashboardOutlined />,
               label: "Dashboard",
             },
@@ -76,11 +48,11 @@ const AppLayout = () => {
               label: "Users",
               children: [
                 {
-                  key: "users-list",
+                  key: "users",
                   label: "All Users",
                 },
                 {
-                  key: "createUser",
+                  key: "users/create",
                   label: "Create User",
                 },
               ],
@@ -100,18 +72,19 @@ const AppLayout = () => {
       </Sider>
 
       <Layout>
-        <HeaderBar title={"Admin Dashboard"} setActiveMenu={setActiveMenu} />
+        <HeaderBar title="Admin Dashboard" />
         <Content
           style={{
             background: "#fff",
             borderRadius: 8,
           }}
         >
-          {renderContent()}
+          {/* 🔥 ROUTED CONTENT */}
+          <Outlet />
         </Content>
       </Layout>
     </Layout>
   );
 };
 
-export default AppLayout;
+export default AdminLayout;

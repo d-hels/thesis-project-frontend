@@ -36,7 +36,7 @@ const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-const AttendanceDashboard: React.FC = ({ stats }: any) => {
+const AttendanceDashboard: React.FC = () => {
   const { state } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [attendanceData, setAttendanceData] = useState([]);
@@ -288,7 +288,6 @@ useEffect(() => {filterByDate();}, [dateRange])
               value={attendanceData.length}
               prefix={<CheckCircleOutlined style={{ color: "#52c41a" }} />}
               valueStyle={{ color: "#52c41a" }}
-              suffix={`/ ${stats.totalWorkers}`}
             />
           </Card>
         </Col>
@@ -296,7 +295,6 @@ useEffect(() => {filterByDate();}, [dateRange])
           <Card>
             <Statistic
               title="Currently Active"
-              value={stats.presentWorkers}
               prefix={<ClockCircleOutlined style={{ color: "#1890ff" }} />}
               valueStyle={{ color: "#1890ff" }}
             />
@@ -316,7 +314,6 @@ useEffect(() => {filterByDate();}, [dateRange])
           <Card>
             <Statistic
               title="Absent Today"
-              value={stats.absentWorkers}
               prefix={<CloseCircleOutlined style={{ color: "#ff4d4f" }} />}
               valueStyle={{ color: "#ff4d4f" }}
             />

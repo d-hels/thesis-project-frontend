@@ -593,3 +593,81 @@ export const updateUserStatus = async (token: any, id: any, isActive: any) => {
     throw error.response?.data || error;
   }
 };
+
+export const transferUserToDepartment = async (token: any, payload: any) => {
+  try {
+    const response = await axios.put(
+      `${apiUrl}api/manager/transfer`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error;
+  }
+};
+
+export const getAllWorkersCount = async (token: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/admin/workers/count`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getUsersByDepartmentId = async (token: any, id: any) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}api/admin/departments/users/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getUserProfile = async (token: any, id: any) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}api/admin/users/profile/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const changePassword = async (token: any, payload: any) => {
+  try {
+    const response = await axios.put(`${apiUrl}api/admin/change/password`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error;
+  }
+};
