@@ -3,8 +3,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/Login/Login";
 import LoginPageAdmin from "./pages/Login/AdminLogin/AdminLogin";
 
-import DepartmentsTable from "./pages/Department/DepartmentsTable";
-import PositionsTable from "./pages/Positions/PositionTable";
+import DepartmentsTable from "./pages/Admin/Dashboard/Department/DepartmentsTable";
+import PositionsTable from "./pages/Admin/Dashboard/Positions/PositionTable";
 import UsersTable from "./pages/Admin/Dashboard/Users/Users";
 import CreateAdminForm from "./pages/Admin/Dashboard/Users/Create/CreateAdmin";
 import Dashboard from "./pages/Admin/Dashboard/Dashboard";

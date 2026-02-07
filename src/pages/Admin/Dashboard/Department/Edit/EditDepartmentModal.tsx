@@ -1,6 +1,6 @@
 import { Modal, Form, Input, message } from "antd";
 import { useEffect } from "react";
-import { updateDepartment } from "../../../api/apiCall";
+import { updateDepartment } from "../../../../../api/apiCall";
 
 type Department = {
   id: number;

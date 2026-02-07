@@ -40,8 +40,8 @@ import { format } from "date-fns";
 
 import CreateDepartmentForm from "./Create/CreateDepartment";
 import EditDepartmentModal from "./Edit/EditDepartmentModal";
-import { useAuth } from "../../auth/auth";
-import { getDepartments, deleteDepartment, getUsersByDepartmentId, getAllWorkersCount } from "../../api/apiCall";
+import { useAuth } from "../../../../auth/auth";
+import { getDepartments, deleteDepartment, getUsersByDepartmentId, getAllWorkersCount } from "../../../../api/apiCall";
 
 type Department = {
   id: number;

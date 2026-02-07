@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Form, Input, message, Modal } from "antd";
-import { createDepartment } from "../../../api/apiCall";
+import { createDepartment } from "../../../../../api/apiCall";
 
 type Props = {
   open: boolean;

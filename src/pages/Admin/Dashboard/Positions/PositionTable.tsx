@@ -38,8 +38,8 @@ import {
   getDepartments,
   deletePosition,
   getAllWorkersCount,
-} from "../../api/apiCall";
-import { useAuth } from "../../auth/auth";
+} from "../../../../api/apiCall";
+import { useAuth } from "../../../../auth/auth";
 import EditPositionModal from "./Edit/Edit";
 
 const { Search } = Input;

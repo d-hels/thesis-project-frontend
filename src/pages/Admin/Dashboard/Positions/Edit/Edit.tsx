@@ -1,6 +1,6 @@
 import { Modal, Form, Input, Select, message } from "antd";
 import { useEffect } from "react";
-import { updatePosition } from "../../../api/apiCall";
+import { updatePosition } from "../../../../../api/apiCall";
 
 type Position = {
   id: number;
