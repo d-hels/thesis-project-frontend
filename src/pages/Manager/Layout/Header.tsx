@@ -21,9 +21,13 @@ const HeaderBar = ({ title, setActiveMenu }: any) => {
     localStorage.removeItem("avatarColor");
   };
 
+  const goToMyProfile = () => {
+    navigate("/manager/profile");
+  }
+
   const handleMenuClick = ({ key }: { key: string }) => {
     if (key === "profile") {
-      setActiveMenu("myProfile");
+      goToMyProfile();
     }
     if (key === "logout") {
       // 🔐 clear auth data

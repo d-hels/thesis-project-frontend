@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Form, Input, message, Select, Modal } from "antd";
-import { createPosition, getDepartments } from "../../../api/apiCall";
+import { createPosition, getDepartments } from "../../../../../api/apiCall";
 
 type Props = {
     open: boolean;

@@ -5,7 +5,6 @@ import {
   Col,
   Avatar,
   Tag,
-  Button,
   Divider,
   Typography,
   Space,
@@ -22,9 +21,6 @@ import {
   EnvironmentOutlined,
   TeamOutlined,
   CalendarOutlined,
-  EditOutlined,
-  CloseCircleOutlined,
-  CheckCircleOutlined,
   KeyOutlined,
   ExclamationCircleOutlined,
   EyeOutlined,
@@ -34,11 +30,11 @@ import { changePassword, getDepartments, getUserProfile, updateUser, updateUserS
 import { useAuth } from "../../../../../auth/auth";
 import { useParams } from "react-router-dom";
 import { format } from "date-fns";
-import EditUserModal from "../EditUserModal/EditUserModal";
+import EditWorkerModal from "../Edit/Edit";
 
 const { Title, Text, Paragraph } = Typography;
 
-const EmployeeProfilePage: React.FC = () => {
+const EmployeeProfile: React.FC = () => {
   const { state } = useAuth();
   const { id } = useParams();
   const [employee, setEmployee] = useState<any>([]);
@@ -91,12 +87,6 @@ const EmployeeProfilePage: React.FC = () => {
     });
   };
 
-  const openPasswordModal = (user: any) => {
-    setSelectedUser(user);
-    passwordForm.resetFields();
-    setPasswordModalVisible(true);
-  };
-
   const fetchDepartments = async () => {
     try {
       const response = await getDepartments(state.user?.token);
@@ -106,11 +96,6 @@ const EmployeeProfilePage: React.FC = () => {
     } catch (error) {
       message.error("Failed to load departments");
     }
-  };
-
-  const openEditModal = (user: any) => {
-    setEditingUser(user);
-    setOpen(true);
   };
 
   const handlePasswordChange = async (values: any) => {
@@ -156,9 +141,6 @@ const EmployeeProfilePage: React.FC = () => {
       message.error("Failed to update user");
     }
   };
-
-  // Skills
-  const skills = ["React", "TypeScript", "Next.js", "Node.js", "AWS"];
 
   useEffect(() => {
     getProfileData();
@@ -246,8 +228,11 @@ const EmployeeProfilePage: React.FC = () => {
               </div>
             </Space>
           </Card>
+        </Col>
 
-          <Card title="Employment Details">
+        {/* Right Column - Additional Info */}
+        <Col xs={24} md={12}>
+        <Card title="Employment Details">
             <Descriptions column={1}>
               <Descriptions.Item label="Manager">
                 <Text strong>{employee.manager}</Text>
@@ -267,60 +252,6 @@ const EmployeeProfilePage: React.FC = () => {
                   : "Never"}
               </Descriptions.Item>
             </Descriptions>
-          </Card>
-        </Col>
-
-        {/* Right Column - Additional Info */}
-        <Col xs={24} md={12}>
-          <Card title="Skills & Expertise" style={{ marginBottom: 24 }}>
-            <Space wrap style={{ marginBottom: 16 }}>
-              {skills.map((skill, index) => (
-                <Tag key={index} color="blue">
-                  {skill}
-                </Tag>
-              ))}
-            </Space>
-            <Divider style={{ margin: "16px 0" }} />
-            <div>
-              <Text strong>Certifications</Text>
-              <div style={{ marginTop: 8 }}>
-                <Tag color="green">AWS Certified</Tag>
-                <Tag color="green">React Professional</Tag>
-              </div>
-            </div>
-          </Card>
-
-          <Card title="Quick Actions">
-            <Space direction="vertical" style={{ width: "100%" }}>
-              <Button block icon={<EditOutlined />} onClick={() => openEditModal(employee)}>
-                Edit Profile
-              </Button>
-              <Button
-                block
-                icon={<KeyOutlined />}
-                onClick={() => {
-                  openPasswordModal(employee);
-                }}
-              >
-                Change Password
-              </Button>
-              <Button
-                block
-                icon={
-                  employee.isActive ? (
-                    <CloseCircleOutlined />
-                  ) : (
-                    <CheckCircleOutlined />
-                  )
-                }
-                onClick={() => {
-                  showSetUserStatus(employee);
-                }}
-                danger={employee.isActive}
-              >
-                {employee.isActive ? "Deactivate User" : "Activate User"}
-              </Button>
-            </Space>
           </Card>
         </Col>
       </Row>
@@ -402,7 +333,7 @@ const EmployeeProfilePage: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
-      <EditUserModal
+      <EditWorkerModal
         open={open}
         user={editingUser}
         departments={departments}
@@ -416,4 +347,4 @@ const EmployeeProfilePage: React.FC = () => {
   );
 };
 
-export default EmployeeProfilePage;
+export default EmployeeProfile;

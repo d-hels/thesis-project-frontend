@@ -24,6 +24,10 @@ import Contracts from './pages/Manager/Dashboard/Contracts/Contracts';
 import EmployeesTable from './pages/Manager/Dashboard/Workers/Workers';
 import CreateWorkersForm from './pages/Manager/Dashboard/CreateWorker';
 import EmployeeProfilePage from './pages/Admin/Dashboard/Users/Profile/Profile';
+import EmployeeProfile from './pages/Manager/Dashboard/Workers/Profile/EmployeeProfile';
+import MyProfile from "../src/pages/Profile/Profile";
+import ContractsTable from './pages/Admin/Dashboard/Contracts/Contracts';
+import ManagersTable from './pages/Admin/Dashboard/Managers/Manager';
 
 const App = () => {
   return (
@@ -55,10 +59,13 @@ const App = () => {
         <Route index element={<Navigate to="home" replace />} />
         <Route path="home" element={<Dashboard />} />
         <Route path="users" element={<UsersTable />} />
+        <Route path="managers" element={<ManagersTable />} />
         <Route path="users/create" element={<CreateAdminForm />} />
         <Route path="users/profile/:id" element={<EmployeeProfilePage />} />
         <Route path="departments" element={<DepartmentsTable />} />
         <Route path="positions" element={<PositionsTable />} />
+        <Route path="profile" element={<MyProfile />} />
+        <Route path="contracts" element={<ContractsTable />} />
       </Route>
 
       {/* ================= MANAGER ================= */}
@@ -75,9 +82,11 @@ const App = () => {
         <Route index element={<Navigate to="home" replace />} />
         <Route path="home" element={<ManagerDashboard />} />
         <Route path="employees" element={<EmployeesTable />} />
+        <Route path="employees/profile/:id" element={<EmployeeProfile />} />
         <Route path="employees/create" element={<CreateWorkersForm />} />
         <Route path="attendance" element={<AttendanceDashboard />} />
         <Route path="contracts" element={<Contracts />} />
+        <Route path="profile" element={<MyProfile />} />
       </Route>
 
       {/* ================= WORKER ================= */}

@@ -82,6 +82,20 @@ export const getUsers = async (token: any) => {
   }
 };
 
+export const getManagers = async (token: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/admin/managers`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const updateUser = async (token: any, payload: any) => {
   try {
     const response = await axios.put(
@@ -669,5 +683,49 @@ export const changePassword = async (token: any, payload: any) => {
     return response.data;
   } catch (error: any) {
     throw error.response?.data || error;
+  }
+};
+
+export const getWorkersByDepartment = async (token: any, id: any) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}api/manager/workers/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllContracts = async (token: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/admin/contracts`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllUsers = async (token: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/admin/users/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
   }
 };

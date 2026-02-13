@@ -34,7 +34,8 @@ import {
   ClockCircleOutlined,
   MailOutlined,
   PhoneOutlined,
-  IdcardOutlined
+  IdcardOutlined,
+  LockOutlined
 } from "@ant-design/icons";
 import { format } from "date-fns";
 
@@ -42,6 +43,7 @@ import CreateDepartmentForm from "./Create/CreateDepartment";
 import EditDepartmentModal from "./Edit/EditDepartmentModal";
 import { useAuth } from "../../../../auth/auth";
 import { getDepartments, deleteDepartment, getUsersByDepartmentId, getAllWorkersCount } from "../../../../api/apiCall";
+import { useNavigate } from "react-router-dom";
 
 type Department = {
   id: number;
@@ -82,6 +84,7 @@ const DepartmentsTable = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('name');
   const [totalEmployees, setTotalEmployees] = useState();
+  const navigate = useNavigate();
 
   const [employeesModalOpen, setEmployeesModalOpen] = useState(false);
   const [departmentEmployees, setDepartmentEmployees] = useState<Employee[]>([]);
@@ -319,6 +322,10 @@ const DepartmentsTable = () => {
     },
   ];
 
+  const goToProfile = (id: string) => {
+    navigate(`/dashboard/users/profile/${id}`);
+  };
+
   const employeeColumns = [
     {
       title: 'Employee',
@@ -346,7 +353,7 @@ const DepartmentsTable = () => {
       title: 'Position',
       dataIndex: 'position',
       key: 'position',
-      width: 150,
+      width: 200,
       render: (text: string) => (
         <div>
           <IdcardOutlined style={{ marginRight: 8, color: '#722ed1' }} />
@@ -372,6 +379,32 @@ const DepartmentsTable = () => {
       )
     },
     {
+      title: "Role",
+      key: "role",
+      width: 120,
+      render: ({ role }: any) => {
+        let color = "blue";
+        let icon = <UserOutlined />;
+
+        if (role === "admin") {
+          color = "red";
+          icon = <LockOutlined />;
+        } else if (role === "manager") {
+          color = "gold";
+          icon = <TeamOutlined />;
+        } else {
+          color = "blue";
+          icon = <UserOutlined />;
+        }
+
+        return (
+          <Tag color={color} icon={icon}>
+            {role.toUpperCase()}
+          </Tag>
+        );
+      },
+    },
+    {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
@@ -389,7 +422,7 @@ const DepartmentsTable = () => {
       title: 'Hire Date',
       dataIndex: 'hireDate',
       key: 'hireDate',
-      width: 120,
+      width: 130,
       render: (date: string) => (
         <Space>
           <CalendarOutlined style={{ color: '#fa8c16' }} />
@@ -401,13 +434,14 @@ const DepartmentsTable = () => {
       title: 'Actions',
       key: 'actions',
       width: 100,
-      render: (_: any) => (
+      render: (_: any, record: any) => (
         <Space size="small">
           <Tooltip title="View Profile">
             <Button 
               type="text" 
               icon={<EyeOutlined />}
               size="small"
+              onClick={() => goToProfile(record.id)}
             />
           </Tooltip>
           <Tooltip title="Send Message">

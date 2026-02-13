@@ -2,8 +2,12 @@ import { Layout, Menu } from "antd";
 import {
   DashboardOutlined,
   UserOutlined,
-  ApartmentOutlined,
-  SolutionOutlined,
+  TeamOutlined,
+  UserSwitchOutlined,
+  BankOutlined,
+  FileTextOutlined,
+  SafetyOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import HeaderBar from "../../Manager/Layout/Header";
@@ -15,6 +19,18 @@ const AdminLayout = () => {
   const location = useLocation();
 
   const selectedKey = location.pathname.replace("/dashboard/", "");
+
+  const menuItems: any = [
+    { key: 'home', icon: <DashboardOutlined />, label: 'Dashboard' },
+    { key: 'users', icon: <UserOutlined />, label: 'Users' },
+    { key: 'users/create', icon: <TeamOutlined />, label: 'Workforce' },
+    { key: 'managers', icon: <UserSwitchOutlined />, label: 'Managers' },
+    { key: 'departments', icon: <BankOutlined />, label: 'Departments' },
+    { key: 'positions', icon: <SafetyOutlined />, label: 'Positions' },
+    { key: 'contracts', icon: <FileTextOutlined />, label: 'Contracts' },
+    { type: 'divider' },
+    { key: 'settings', icon: <SettingOutlined />, label: 'Settings' }
+  ];
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -36,38 +52,7 @@ const AdminLayout = () => {
           mode="inline"
           selectedKeys={[selectedKey]}
           onClick={({ key }) => navigate(`/dashboard/${key}`)}
-          items={[
-            {
-              key: "home",
-              icon: <DashboardOutlined />,
-              label: "Dashboard",
-            },
-            {
-              key: "users",
-              icon: <UserOutlined />,
-              label: "Users",
-              children: [
-                {
-                  key: "users",
-                  label: "All Users",
-                },
-                {
-                  key: "users/create",
-                  label: "Create User",
-                },
-              ],
-            },
-            {
-              key: "departments",
-              icon: <ApartmentOutlined />,
-              label: "Departments",
-            },
-            {
-              key: "positions",
-              icon: <SolutionOutlined />,
-              label: "Positions",
-            },
-          ]}
+          items={menuItems}
         />
       </Sider>
 

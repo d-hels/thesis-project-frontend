@@ -15,7 +15,6 @@ import {
   Avatar,
   Tooltip,
   Switch,
-  Form,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import {
@@ -32,18 +31,19 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   LockOutlined,
+  SwapOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { format } from "date-fns";
 import { useAuth } from "../../../../auth/auth";
 import {
-  deleteUser,
   getDepartments,
   getUsers,
-  updateUser,
+  transferUserToDepartment,
   updateUserStatus,
 } from "../../../../api/apiCall";
-import EditUserModal from "./EditUserModal/EditUserModal";
 import { useNavigate } from "react-router-dom";
+import TransferWorkerModal from "../../../Manager/Dashboard/Workers/Transfer/Transfer";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -70,7 +70,6 @@ const UsersTable = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
   const [departments, setDepartments] = useState<any[]>([]);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [searchText, setSearchText] = useState("");
@@ -78,9 +77,7 @@ const UsersTable = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [departmentFilter, setDepartmentFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("name");
-
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [passwordForm] = Form.useForm();
+  const [isOpenTransferModal, setIsOpenTransferModal] = useState(false);
 
   const goToProfile = (id: string) => {
     navigate(`/dashboard/users/profile/${id}`);
@@ -114,23 +111,6 @@ const UsersTable = () => {
     fetchDepartments();
   }, []);
 
-  const handleUpdateUser = async (values: any) => {
-    try {
-      if (!editingUser) return;
-
-      await updateUser(state.user?.token, {
-        id: editingUser.id,
-        ...values,
-      });
-
-      message.success("User updated successfully");
-      setOpen(false);
-      setEditingUser(null);
-      fetchUsers();
-    } catch {
-      message.error("Failed to update user");
-    }
-  };
 
   const setUserStatus = async (user: User) => {
     try {
@@ -205,6 +185,11 @@ const UsersTable = () => {
   const activeUsers = data.filter((user) => user.isActive).length;
   const adminUsers = data.filter((user) => user.role === "admin").length;
   const managerUsers = data.filter((user) => user.role === "manager").length;
+
+  const openTransferModal = (user: User) => {
+    setEditingUser(user);
+    setIsOpenTransferModal(true);
+  };
 
   const columns: ColumnsType<User> = [
     {
@@ -354,14 +339,46 @@ const UsersTable = () => {
       ),
     },
     {
-      title: "Profile",
-      key: "Profile",
-      width: 100,
+      title: "Actions",
+      key: "actions",
       render: (_, record) => (
-        <Button onClick={() => goToProfile(record.id)}>Profile</Button>
+        <Space size="small">
+          <Tooltip title="Transfer">
+            <Button 
+              type="text" 
+              icon={<SwapOutlined />}
+              onClick={() => openTransferModal(record)}
+            />
+          </Tooltip>
+          <Tooltip title=" View Profile">
+            <Button 
+              type="text" 
+              icon={<EyeOutlined />}
+              onClick={() => goToProfile(record.id)}
+            />
+          </Tooltip>
+        </Space>
       ),
     },
   ];
+
+  const handleTransferUser = async (values: any) => {
+    try {
+      if (!editingUser) return;
+
+      await transferUserToDepartment(state.user?.token, {
+        id: editingUser.id,
+        ...values,
+      });
+
+      message.success("User updated successfully");
+      setIsOpenTransferModal(false);
+      setEditingUser(null);
+      fetchUsers();
+    } catch {
+      message.error("Failed to update user");
+    }
+  };
 
   return (
     <div style={{ padding: "24px" }}>
@@ -524,15 +541,15 @@ const UsersTable = () => {
         />
       </Card>
 
-      <EditUserModal
-        open={open}
+      <TransferWorkerModal
+        open={isOpenTransferModal}
         user={editingUser}
         departments={departments}
         onCancel={() => {
-          setOpen(false);
+          setIsOpenTransferModal(false);
           setEditingUser(null);
         }}
-        onSubmit={handleUpdateUser}
+        onSubmit={handleTransferUser}
       />
     </div>
   );

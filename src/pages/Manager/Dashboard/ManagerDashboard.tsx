@@ -136,14 +136,14 @@ const ManagerDashboard = () => {
   const cardStats = [
     {
       title: "Total Employees",
-      value: stats.totalWorkers,
+      value: stats?.totalWorkers,
       color: "#40c9c6",
       icon: <TeamOutlined />,
       change: "+2 this month",
     },
     {
       title: "Attendance Today",
-      value: stats.attendancePercentage + "%",
+      value: stats?.attendancePercentage + "%",
       color: "#36a2eb",
       icon: <ClockCircleOutlined />,
       change: "+3% from yesterday",
@@ -157,7 +157,7 @@ const ManagerDashboard = () => {
     },
     {
       title: "Active Now",
-      value: stats.presentWorkers,
+      value: stats?.presentWorkers,
       color: "#ff6b6b",
       icon: <CheckCircleOutlined />,
       change: "85% of workforce",

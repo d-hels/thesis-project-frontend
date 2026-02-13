@@ -413,11 +413,6 @@ const Contracts = () => {
           type="warning"
           showIcon
           style={{ marginBottom: 24 }}
-          action={
-            <Button type="link" size="small">
-              View All
-            </Button>
-          }
         />
       )}
 
