@@ -484,7 +484,6 @@ const ContractsTable = () => {
             icon={<EditOutlined />}
             onClick={() => {
               setViewModalOpen(false);
-              setEditModalOpen(true);
             }}
           >
             Edit Contract
@@ -802,9 +801,6 @@ const ContractsTable = () => {
         width={600}
       >
         <div style={{ padding: '24px 0' }}>
-          <p style={{ textAlign: 'center', color: '#8c8c8c' }}>
-            This is a mock edit modal. In a real application, this would contain a form to edit contract details.
-          </p>
           <div style={{ background: '#f5f5f5', padding: 16, borderRadius: 8, marginTop: 16 }}>
             <div><strong>Employee:</strong> {selectedContract.userName}</div>
             <div style={{ marginTop: 8 }}><strong>Current Salary:</strong> {formatCurrency(selectedContract.salaryAmount)}</div>

@@ -14,7 +14,7 @@ const AppHeader = () => {
         </Title>
       </div>
 
-      <Menu
+      {/* <Menu
         mode="horizontal"
         className="header-center"
         selectable={false}
@@ -23,7 +23,7 @@ const AppHeader = () => {
           { key: "products", label: "Products" },
           { key: "dashboard", label: "Dashboard" },
         ]}
-      />
+      /> */}
 
       <div className="header-right">
         <Button type="primary" icon={<UserOutlined />}>

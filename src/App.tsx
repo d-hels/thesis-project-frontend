@@ -25,7 +25,7 @@ import EmployeesTable from './pages/Manager/Dashboard/Workers/Workers';
 import CreateWorkersForm from './pages/Manager/Dashboard/CreateWorker';
 import EmployeeProfilePage from './pages/Admin/Dashboard/Users/Profile/Profile';
 import EmployeeProfile from './pages/Manager/Dashboard/Workers/Profile/EmployeeProfile';
-import MyProfile from "../src/pages/Profile/Profile";
+import MyProfile from "./pages/Profile/Profile";
 import ContractsTable from './pages/Admin/Dashboard/Contracts/Contracts';
 import ManagersTable from './pages/Admin/Dashboard/Managers/Manager';
 
