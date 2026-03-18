@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiUrl = "http://localhost:3000/";
+const apiUrl = "https://thesis-project-backend-production.up.railway.app/";
 
 export const adminGate = async (payload: any) => {
   try {
