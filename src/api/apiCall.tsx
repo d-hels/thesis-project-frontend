@@ -331,7 +331,7 @@ export const deleteWorker = async (token: any, id: any) => {
 
 export const getUsersCount = async (token: any) => {
   try {
-    const response = await axios.get(`${apiUrl}api/admin/users/count`, {
+    const response = await axios.get(`${apiUrl}api/admin/users/statistics`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -719,6 +719,20 @@ export const getAllContracts = async (token: any) => {
 export const getAllUsers = async (token: any) => {
   try {
     const response = await axios.get(`${apiUrl}api/admin/users/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getDepartmentAttendancePercentage = async (token: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/admin/departments/attendance/percentage`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

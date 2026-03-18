@@ -247,7 +247,12 @@ const EmployeeProfilePage: React.FC = () => {
             </Space>
           </Card>
 
-          <Card title="Employment Details">
+          
+        </Col>
+
+        {/* Right Column - Additional Info */}
+        <Col xs={24} md={12}>
+        <Card title="Employment Details" style={{marginBottom: 24}}>
             <Descriptions column={1}>
               <Descriptions.Item label="Manager">
                 <Text strong>{employee.manager}</Text>
@@ -268,29 +273,8 @@ const EmployeeProfilePage: React.FC = () => {
               </Descriptions.Item>
             </Descriptions>
           </Card>
-        </Col>
 
-        {/* Right Column - Additional Info */}
-        <Col xs={24} md={12}>
-          <Card title="Skills & Expertise" style={{ marginBottom: 24 }}>
-            <Space wrap style={{ marginBottom: 16 }}>
-              {skills.map((skill, index) => (
-                <Tag key={index} color="blue">
-                  {skill}
-                </Tag>
-              ))}
-            </Space>
-            <Divider style={{ margin: "16px 0" }} />
-            <div>
-              <Text strong>Certifications</Text>
-              <div style={{ marginTop: 8 }}>
-                <Tag color="green">AWS Certified</Tag>
-                <Tag color="green">React Professional</Tag>
-              </div>
-            </div>
-          </Card>
-
-          <Card title="Quick Actions">
+          <Card title="Quick Actions" style={{marginBottom: 24}}>
             <Space direction="vertical" style={{ width: "100%" }}>
               <Button block icon={<EditOutlined />} onClick={() => openEditModal(employee)}>
                 Edit Profile

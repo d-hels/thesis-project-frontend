@@ -23,7 +23,7 @@ const AdminLayout = () => {
   const menuItems: any = [
     { key: 'home', icon: <DashboardOutlined />, label: 'Dashboard' },
     { key: 'users', icon: <UserOutlined />, label: 'Users' },
-    { key: 'users/create', icon: <TeamOutlined />, label: 'Workforce' },
+    { key: 'users/create', icon: <TeamOutlined />, label: 'Create User' },
     { key: 'managers', icon: <UserSwitchOutlined />, label: 'Managers' },
     { key: 'departments', icon: <BankOutlined />, label: 'Departments' },
     { key: 'positions', icon: <SafetyOutlined />, label: 'Positions' },
