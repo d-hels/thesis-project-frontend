@@ -119,15 +119,15 @@ const AdminDashboard: React.FC = () => {
     },
     {
       title: "On Leave",
-      value: statistics?.totalWorkers,
-      change: "-2",
+      value: 1,
+      change: "",
       icon: <ClockCircleOutlined />,
       color: "#faad14",
       bg: "#fff7e6",
     },
     {
       title: "Departments",
-      value: "86",
+      value: "10",
       change: "",
       icon: <RiseOutlined />,
       color: "#722ed1",

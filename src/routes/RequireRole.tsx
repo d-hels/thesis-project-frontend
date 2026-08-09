@@ -11,7 +11,6 @@ const RequireRole = ({
   children: JSX.Element;
 }) => {
   const { state } = useAuth();
-
   if (state.user?.role !== role) {
     return <Navigate to="/login" replace />;
   }

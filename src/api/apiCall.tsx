@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiUrl = "https://thesis-project-backend-production.up.railway.app/";
+const apiUrl = "http://localhost:3000/";
 
 export const adminGate = async (payload: any) => {
   try {
@@ -520,9 +520,9 @@ export const getWorkersByDepartmentId = async (token: any, id: any) => {
   }
 };
 
-export const getContracts = async (token: any) => {
+export const getContracts = async (token: any, departmentId: any) => {
   try {
-    const response = await axios.get(`${apiUrl}api/manager/contracts`, {
+    const response = await axios.get(`${apiUrl}api/manager/contracts/${departmentId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -733,6 +733,66 @@ export const getAllUsers = async (token: any) => {
 export const getDepartmentAttendancePercentage = async (token: any) => {
   try {
     const response = await axios.get(`${apiUrl}api/admin/departments/attendance/percentage`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getContractByUser = async (token: any, id: any) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}api/worker/contracts/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getManagerByDepartment = async (token: any, name: any) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}api/worker/manager/${name}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAttendanceWorkersByUser = async (token: any, id: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/worker/attendance/user/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getWorkingDays = async (token: any) => {
+  try {
+    const response = await axios.get(`${apiUrl}api/worker/working-days`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

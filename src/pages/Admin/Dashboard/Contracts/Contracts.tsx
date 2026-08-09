@@ -838,7 +838,7 @@ const ContractsTable = () => {
 
       {/* Statistics Cards */}
       <Row gutter={16} style={{ marginBottom: 24 }}>
-        <Col span={6}>
+        <Col span={8}>
           <Card>
             <Statistic
               title="Total Contracts"
@@ -848,7 +848,7 @@ const ContractsTable = () => {
             />
           </Card>
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <Card>
             <Statistic
               title="Active Contracts"
@@ -858,7 +858,7 @@ const ContractsTable = () => {
             />
           </Card>
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <Card>
             <Statistic
               title="Expiring Soon"
@@ -868,7 +868,7 @@ const ContractsTable = () => {
             />
           </Card>
         </Col>
-        <Col span={6}>
+        {/* <Col span={6}>
           <Card>
             <Statistic
               title="Total Salary Budget"
@@ -877,7 +877,7 @@ const ContractsTable = () => {
               valueStyle={{ color: '#722ed1', fontSize: 28 }}
             />
           </Card>
-        </Col>
+        </Col> */}
       </Row>
 
       {/* Filters */}

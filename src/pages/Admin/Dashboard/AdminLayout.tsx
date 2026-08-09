@@ -7,7 +7,7 @@ import {
   BankOutlined,
   FileTextOutlined,
   SafetyOutlined,
-  SettingOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import HeaderBar from "../../Manager/Layout/Header";
@@ -29,7 +29,7 @@ const AdminLayout = () => {
     { key: 'positions', icon: <SafetyOutlined />, label: 'Positions' },
     { key: 'contracts', icon: <FileTextOutlined />, label: 'Contracts' },
     { type: 'divider' },
-    { key: 'settings', icon: <SettingOutlined />, label: 'Settings' }
+    { key: 'settings', icon: <LogoutOutlined />, label: 'Logout' }
   ];
 
   return (
@@ -44,7 +44,7 @@ const AdminLayout = () => {
             textAlign: "center",
           }}
         >
-          LOGO
+          Employvia
         </div>
 
         <Menu
@@ -64,7 +64,6 @@ const AdminLayout = () => {
             borderRadius: 8,
           }}
         >
-          {/* 🔥 ROUTED CONTENT */}
           <Outlet />
         </Content>
       </Layout>

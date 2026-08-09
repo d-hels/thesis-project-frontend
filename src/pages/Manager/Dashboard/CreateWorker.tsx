@@ -240,9 +240,9 @@ const CreateWorkersForm = () => {
               {loading ? "Creating..." : "Add Team Member"}
             </Button>
           </Form.Item>
-          <p style={{ color: "#8c8c8c", marginTop: 8, fontSize: 12 }}>
+          {/* <p style={{ color: "#8c8c8c", marginTop: 8, fontSize: 12 }}>
             The new member will receive login credentials via email
-          </p>
+          </p> */}
         </div>
       </Form>
     </Card>

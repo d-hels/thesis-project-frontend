@@ -67,7 +67,7 @@ const LoginPage = () => {
         >
           <div style={{ textAlign: "center", marginBottom: 32 }}>
             <Title level={2} style={{ marginBottom: 4 }}>
-              Welcome back
+              Welcome to Employvia
             </Title>
             <Text type="secondary">Sign in to continue to your dashboard</Text>
           </div>
@@ -111,18 +111,16 @@ const LoginPage = () => {
             <div
               style={{
                 display: "flex",
-                justifyContent: "space-between",
+                justifyContent: "flex-end",
                 alignItems: "center",
                 marginBottom: 16,
               }}
             >
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item>
+            
 
-              <Text type="secondary">
+              {/* <Text type="secondary">
                 <a href="/register">Forgot password?</a>
-              </Text>
+              </Text> */}
             </div>
 
             <Form.Item>
@@ -141,11 +139,11 @@ const LoginPage = () => {
               </Button>
             </Form.Item>
 
-            <div style={{ textAlign: "center" }}>
+            {/* <div style={{ textAlign: "center" }}>
               <Text type="secondary">
                 Don’t have an account? <a href="/register">Create one</a>
               </Text>
-            </div>
+            </div> */}
           </Form>
         </Card>
       </div>

@@ -57,7 +57,7 @@ const Contracts = () => {
   };
 
   const getContractsData = async () => {
-    const response = await getContracts(state.user?.token);
+    const response = await getContracts(state.user?.token, state.user?.departmentId);
     if (response.success) {
       const updatedContracts = response.payload.map((contract: any) => {
         const today = dayjs();

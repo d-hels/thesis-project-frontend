@@ -65,9 +65,9 @@ const HeaderBar = ({ title, setActiveMenu }: any) => {
       </Title>
 
       <Space size="large">
-        <Badge count={5}>
+        {/* <Badge count={5}>
           <BellOutlined style={{ fontSize: 20 }} />
-        </Badge>
+        </Badge> */}
 
         <Dropdown
           menu={{ items, onClick: handleMenuClick }}

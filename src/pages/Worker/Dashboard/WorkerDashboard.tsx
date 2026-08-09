@@ -4,35 +4,24 @@ import {
   } from "antd";
 import {
   DashboardOutlined,
-  TeamOutlined,
-  ApartmentOutlined,
-  SolutionOutlined,
+  ProfileOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
 // import Dashboard from "../Dashboard/Dashboard";
 import MyProfile from "../../Profile/Profile";
 import HeaderBar from "../Header/Header";
 import EmployeeDashboard from "../Employee";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 const { Sider, Content } = Layout;
 
 const WorkerDashboard = () => {
-  const [activeMenu, setActiveMenu] = useState("dashboard");
+  const navigate = useNavigate();
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const selectedKey = location.pathname.replace("/worker/", "");
 
   const toggleCollapsed = () => setCollapsed(!collapsed);
-
-  const renderContent = () => {
-    switch (activeMenu) {
-      case "dashboard":
-        return <EmployeeDashboard/>;
-        case "myProfile":
-          return <MyProfile />;
-      default:
-        return null;
-    }
-  };
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsible collapsed={collapsed} onCollapse={toggleCollapsed} theme="light"
@@ -47,29 +36,19 @@ const WorkerDashboard = () => {
         <Menu
           theme="light"
           mode="inline"
-          selectedKeys={[activeMenu]}
-          onClick={({ key }) => setActiveMenu(key)}
+          selectedKeys={[selectedKey]}
+          onClick={({ key }) => navigate(`/worker/${key}`)}
           items={[
             {
-              key: "dashboard",
+              key: "home",
               icon: <DashboardOutlined />,
               label: "Dashboard",
             },
             {
-              key: "users",
-              icon: <TeamOutlined />,
-              label: "Employees",
-              children: [
-                {
-                  key: "users-list",
-                  label: "All Employees",
-                },
-                {
-                  key: "createUser",
-                  label: "Create Employee",
-                },
-              ],
-            },
+              key: "profile",
+              icon: <ProfileOutlined />,
+              label: "Profile",
+            }
           ]}
         />
       </Sider>
@@ -81,8 +60,8 @@ const WorkerDashboard = () => {
             borderRadius: 8,
           }}
         >
-        <HeaderBar title={"Dashboard"} setActiveMenu={setActiveMenu} />
-          {renderContent()}
+        <HeaderBar title={"Dashboard"} />
+          <Outlet/>
         </Content>
       </Layout>
     </Layout>

@@ -85,7 +85,6 @@ const AttendanceDashboard: React.FC = () => {
   }
 
 useEffect(() => {filterByDate();}, [dateRange])
-  // Filter data based on search and filters
   useEffect(() => {
     let filtered: any = [...attendanceData];
     filtered = filtered.map((item: any) => {
@@ -160,7 +159,7 @@ useEffect(() => {filterByDate();}, [dateRange])
       render: (time: string | null) =>
         time ? (
           <Tag color="green" icon={<CheckCircleOutlined />}>
-            {moment(time, "HH:mm:ss").format("hh:mm A")}
+            {moment(time, "HH:mm").format("hh:mm")}
           </Tag>
         ) : (
           <Tag color="red" icon={<CloseCircleOutlined />}>
@@ -172,12 +171,16 @@ useEffect(() => {filterByDate();}, [dateRange])
       title: "Check Out",
       dataIndex: "checkOut",
       key: "checkOut",
-      render: (time: string | null) =>
+      render: (time: string | null, record: any) =>
         time ? (
           <Tag color="blue" icon={<ClockCircleOutlined />}>
-            {moment(time, "HH:mm:ss").format("hh:mm A")}
+            {moment(time, "HH:mm").format("hh:mm")}
           </Tag>
-        ) : (
+        ) : record.checkIn === null ? (
+          <Tag color="red" icon={<CloseCircleOutlined />}>
+            Not checked in
+          </Tag>
+        ): (
           <Tag color="orange">Still Active</Tag>
         ),
     },
@@ -252,7 +255,6 @@ useEffect(() => {filterByDate();}, [dateRange])
 
   const handleExportData = () => {
     setLoading(true);
-    // Simulate API call
     setTimeout(() => {
       message.success("Data exported successfully");
       setLoading(false);
@@ -261,7 +263,6 @@ useEffect(() => {filterByDate();}, [dateRange])
 
   const handleRefresh = () => {
     setLoading(true);
-    // Simulate API call to refresh data
     setTimeout(() => {
       setLoading(false);
       message.success("Data refreshed successfully");
@@ -295,6 +296,7 @@ useEffect(() => {filterByDate();}, [dateRange])
           <Card>
             <Statistic
               title="Currently Active"
+              value={1}
               prefix={<ClockCircleOutlined style={{ color: "#1890ff" }} />}
               valueStyle={{ color: "#1890ff" }}
             />
@@ -314,6 +316,7 @@ useEffect(() => {filterByDate();}, [dateRange])
           <Card>
             <Statistic
               title="Absent Today"
+              value={statistics.absentCount}
               prefix={<CloseCircleOutlined style={{ color: "#ff4d4f" }} />}
               valueStyle={{ color: "#ff4d4f" }}
             />
@@ -371,14 +374,14 @@ useEffect(() => {filterByDate();}, [dateRange])
               <Button onClick={handleRefresh} loading={loading}>
                 Refresh
               </Button>
-              <Button
+              {/* <Button
                 type="primary"
                 icon={<DownloadOutlined />}
                 onClick={handleExportData}
                 loading={loading}
               >
                 Export Data
-              </Button>
+              </Button> */}
             </Space>
           </Col>
         </Row>

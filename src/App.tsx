@@ -1,4 +1,4 @@
-import './App.css'
+import "./App.css";
 import { Navigate, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/Login/Login";
 import LoginPageAdmin from "./pages/Login/AdminLogin/AdminLogin";
@@ -18,22 +18,32 @@ import AdminGateRoute from "./pages/Admin/AdminGate/AdminRoute";
 
 import RequireAuth from "./routes/RequireAuth";
 import RequireRole from "./routes/RequireRole";
-import AttendanceDashboard from './pages/Manager/Dashboard/Attendance/Attendance';
-import ManagerDashboard from './pages/Manager/Dashboard/ManagerDashboard';
-import Contracts from './pages/Manager/Dashboard/Contracts/Contracts';
-import EmployeesTable from './pages/Manager/Dashboard/Workers/Workers';
-import CreateWorkersForm from './pages/Manager/Dashboard/CreateWorker';
-import EmployeeProfilePage from './pages/Admin/Dashboard/Users/Profile/Profile';
-import EmployeeProfile from './pages/Manager/Dashboard/Workers/Profile/EmployeeProfile';
+import AttendanceDashboard from "./pages/Manager/Dashboard/Attendance/Attendance";
+import ManagerDashboard from "./pages/Manager/Dashboard/ManagerDashboard";
+import Contracts from "./pages/Manager/Dashboard/Contracts/Contracts";
+import EmployeesTable from "./pages/Manager/Dashboard/Workers/Workers";
+import CreateWorkersForm from "./pages/Manager/Dashboard/CreateWorker";
+import EmployeeProfilePage from "./pages/Admin/Dashboard/Users/Profile/Profile";
+import EmployeeProfile from "./pages/Manager/Dashboard/Workers/Profile/EmployeeProfile";
 import MyProfile from "./pages/Profile/Profile";
-import ContractsTable from './pages/Admin/Dashboard/Contracts/Contracts';
-import ManagersTable from './pages/Admin/Dashboard/Managers/Manager';
+import ContractsTable from "./pages/Admin/Dashboard/Contracts/Contracts";
+import ManagersTable from "./pages/Admin/Dashboard/Managers/Manager";
+import PublicRoute from "./routes/PublicRoute";
+import ProfileDashboard from "./pages/Profile/Profile";
+import EmployeeDashboard from "./pages/Worker/Employee";
 
 const App = () => {
   return (
     <Routes>
       {/* ================= PUBLIC ================= */}
-      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        }
+      />
 
       <Route path="/admin" element={<AdminGate />} />
       <Route
@@ -99,7 +109,11 @@ const App = () => {
             </RequireRole>
           </RequireAuth>
         }
-      />
+      >
+        <Route index element={<Navigate to="home" replace />} />
+        <Route path="home" element={<EmployeeDashboard />} />
+        <Route path="profile" element={<ProfileDashboard />} />
+      </Route>
 
       {/* ================= DEFAULT ================= */}
       <Route path="/" element={<Navigate to="/login" replace />} />

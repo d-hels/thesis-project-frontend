@@ -24,7 +24,7 @@ import {
   checkOutAttendanceManager,
   getIfaUserCheckedInManager,
   getStatsByDepartmentId,
-  getWorkers,
+  getWorkersByDepartment,
 } from "../../../api/apiCall";
 import { useAuth } from "../../../auth/auth";
 import type { ColumnsType } from "antd/es/table";
@@ -81,7 +81,7 @@ const ManagerDashboard = () => {
   const fetchWorkers = async () => {
     setLoading(true);
     try {
-      const res: any = await getWorkers(state.user?.token);
+      const res: any = await getWorkersByDepartment(state.user?.token, state.user?.departmentId);
 
       const latest7Workers = res.payload.slice(0, 7);
       setData(latest7Workers);
@@ -121,11 +121,11 @@ const ManagerDashboard = () => {
       key: "address",
       ellipsis: true,
     },
-    {
-      title: "Department Name",
-      dataIndex: "departmentName",
-      key: "departmentName",
-    },
+    // {
+    //   title: "Department Name",
+    //   dataIndex: "departmentName",
+    //   key: "departmentName",
+    // },
     {
       title: "Position",
       key: "positionTitle",
@@ -143,24 +143,24 @@ const ManagerDashboard = () => {
     },
     {
       title: "Attendance Today",
-      value: stats?.attendancePercentage + "%",
+      value: "80%",
       color: "#36a2eb",
       icon: <ClockCircleOutlined />,
-      change: "+3% from yesterday",
+      change: "-20% from yesterday",
     },
-    {
-      title: "Pending Leaves",
-      value: 0,
-      color: "#f6a623",
-      icon: <CalendarOutlined />,
-      change: "Need attention",
-    },
+    // {
+    //   title: "Pending Leaves",
+    //   value: 0,
+    //   color: "#f6a623",
+    //   icon: <CalendarOutlined />,
+    //   change: "Need attention",
+    // },
     {
       title: "Active Now",
       value: stats?.presentWorkers,
       color: "#ff6b6b",
       icon: <CheckCircleOutlined />,
-      change: "85% of workforce",
+      change: `${stats?.attendancePercentage}% of workforce`,
     },
   ];
 
@@ -230,7 +230,7 @@ const ManagerDashboard = () => {
                       </span>
                     </Title>
                     <Paragraph type="secondary">
-                      {state.user?.departmentName} • ID:
+                      {state.user?.departmentName}
                     </Paragraph>
                   </Col>
                   <Col span={12} style={{ textAlign: "right" }}>
@@ -295,7 +295,7 @@ const ManagerDashboard = () => {
           </Card>
           <Row gutter={[24, 24]} style={{ marginBottom: 24 }}>
             {cardStats.map((stat) => (
-              <Col xs={24} sm={12} md={6} key={stat.title}>
+              <Col xs={24} sm={12} md={8} key={stat.title}>
                 <Card
                   style={{
                     borderRadius: 12,

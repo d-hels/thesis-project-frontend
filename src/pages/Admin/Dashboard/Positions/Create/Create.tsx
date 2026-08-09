@@ -71,7 +71,7 @@ const CreatePositionForm = ({ open, token, onCancel, onSuccess }: Props) => {
           name="description"
           rules={[{ required: true, message: "Description is required" }]}
         >
-          <Input.TextArea rows={4} />
+          <Input.TextArea placeholder="Write description..." rows={4} />
         </Form.Item>
 
       </Form>

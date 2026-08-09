@@ -3,13 +3,12 @@ import {
   ClockCircleOutlined,
   CalendarOutlined,
   UserOutlined,
-  BarChartOutlined,
-  TeamOutlined,
-  BellOutlined,
   CheckCircleOutlined,
   LogoutOutlined,
   FileTextOutlined,
-  SettingOutlined,
+  CloseCircleOutlined,
+  RiseOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import {
   Layout,
@@ -19,10 +18,8 @@ import {
   Statistic,
   Button,
   Progress,
-  Timeline,
   List,
   Avatar,
-  Badge,
   Space,
   Tag,
   Typography,
@@ -35,14 +32,20 @@ import {
   Table,
   Tabs,
   Alert,
+  theme,
 } from "antd";
 import moment from "moment";
 import {
   checkInAttendanceWorker,
   checkOutAttendanceWorker,
+  getAttendanceWorkersByUser,
+  getContractByUser,
   getIfaUserCheckedInWorker,
+  getManagerByDepartment,
+  getWorkingDays,
 } from "../../api/apiCall";
 import { useAuth } from "../../auth/auth";
+import { format } from "date-fns";
 
 const { Content } = Layout;
 const { Title, Text, Paragraph } = Typography;
@@ -59,7 +62,29 @@ const EmployeeDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [attendanceCompleted, setAttendanceCompleted] = useState(false);
+  const [contractStatus, setContractStatus] = useState<any>();
+  const [managerName, setManagerName] = useState<any>();
+  const [attendanceData, setAttendanceData] = useState<any>();
+  const [workingDays, setWorkingDays] = useState<any>();
   const [form] = Form.useForm();
+
+  const getContractByUserId = async () => {
+    const response = await getContractByUser(state.user?.token, state.user?.id);
+    setContractStatus(response.payload);
+  };
+
+  const getManagerName = async () => {
+    const response = await getManagerByDepartment(
+      state.user?.token,
+      state.user?.departmentName
+    );
+    setManagerName(response.payload);
+  };
+
+  useEffect(() => {
+    getContractByUserId();
+    getManagerName();
+  }, []);
 
   const employeeData = {
     name: "John Doe",
@@ -92,84 +117,20 @@ const EmployeeDashboard = () => {
     }
   };
 
-  // Sample attendance data
-  const attendanceData = [
-    {
-      date: "2024-01-15",
-      checkIn: "09:00 AM",
-      checkOut: "06:00 PM",
-      status: "Present",
-    },
-    {
-      date: "2024-01-14",
-      checkIn: "09:15 AM",
-      checkOut: "06:30 PM",
-      status: "Present",
-    },
-    {
-      date: "2024-01-13",
-      checkIn: "09:05 AM",
-      checkOut: "05:45 PM",
-      status: "Half Day",
-    },
-    { date: "2024-01-12", checkIn: "-", checkOut: "-", status: "Leave" },
-    {
-      date: "2024-01-11",
-      checkIn: "09:10 AM",
-      checkOut: "06:15 PM",
-      status: "Present",
-    },
-  ];
+  const getAttendanceData = async () => {
+    const response = await getAttendanceWorkersByUser(
+      state.user?.token,
+      state.user?.id
+    );
+    setAttendanceData(response.payload);
+  };
 
-  // Sample leaves data
-  const leaveTypes = [
-    { type: "Casual Leave", used: 4, total: 10 },
-    { type: "Sick Leave", used: 2, total: 7 },
-    { type: "Earned Leave", used: 2, total: 15 },
-    { type: "Maternity Leave", used: 0, total: 180 },
-  ];
+  const fetchWorkingDays = async () => {
+    const response = await getWorkingDays(state.user?.token);
+    console.log(response, "res");
+    setWorkingDays(response.payload.workingDays);
+  };
 
-  // Sample notifications
-  const notifications = [
-    {
-      id: 1,
-      title: "Leave Approved",
-      description: "Your leave for Jan 20 has been approved",
-      time: "2 hours ago",
-      read: false,
-    },
-    {
-      id: 2,
-      title: "New Announcement",
-      description: "Team meeting scheduled for tomorrow",
-      time: "5 hours ago",
-      read: false,
-    },
-    {
-      id: 3,
-      title: "Payroll Processed",
-      description: "Salary for December has been processed",
-      time: "1 day ago",
-      read: true,
-    },
-    {
-      id: 4,
-      title: "Performance Review",
-      description: "Q4 performance review scheduled",
-      time: "2 days ago",
-      read: true,
-    },
-  ];
-
-  // Sample upcoming holidays
-  const upcomingHolidays = [
-    { date: "Jan 26, 2024", occasion: "Republic Day" },
-    { date: "Mar 25, 2024", occasion: "Holi" },
-    { date: "Apr 11, 2024", occasion: "Eid al-Fitr" },
-    { date: "Aug 15, 2024", occasion: "Independence Day" },
-  ];
-
-  // Update current time every minute
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -227,60 +188,121 @@ const EmployeeDashboard = () => {
   };
 
   const columns = [
-    { title: "Date", dataIndex: "date", key: "date" },
-    { title: "Check In", dataIndex: "checkIn", key: "checkIn" },
-    { title: "Check Out", dataIndex: "checkOut", key: "checkOut" },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      render: (date: string) => moment(date).format("MMM DD, YYYY"),
+      sorter: (a: any, b: any) => moment(a.date).unix() - moment(b.date).unix(),
+    },
+    {
+      title: "Check In",
+      dataIndex: "checkIn",
+      key: "checkIn",
+      render: (time: string | null) =>
+        time ? (
+          <Tag color="blue" icon={<CheckCircleOutlined />}>
+            {moment(time, "HH:mm").format("hh:mm A")}
+          </Tag>
+        ) : (
+          <Tag color="red" icon={<CloseCircleOutlined />}>
+            Not checked in
+          </Tag>
+        ),
+    },
+    {
+      title: "Check Out",
+      dataIndex: "checkOut",
+      key: "checkOut",
+      render: (time: string | null, record: any) =>
+        time ? (
+          <Tag color="blue" icon={<ClockCircleOutlined />}>
+            {moment(time, "HH:mm").format("hh:mm A")}
+          </Tag>
+        ) : record.checkIn === null ? (
+          <Tag color="red" icon={<CloseCircleOutlined />}>
+            Not checked in
+          </Tag>
+        ) : (
+          <Tag color="orange">Still Active</Tag>
+        ),
+    },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status: any) => (
-        <Tag
-          color={
-            status === "Present"
-              ? "green"
-              : status === "Half Day"
-              ? "orange"
-              : status === "Leave"
-              ? "red"
-              : "default"
-          }
-        >
-          {status}
-        </Tag>
-      ),
+      render: (status: string) => {
+        let color = "";
+        let icon = null;
+
+        switch (status) {
+          case "present":
+            color = "success";
+            icon = <CheckCircleOutlined />;
+            break;
+          case "active":
+            color = "processing";
+            icon = <ClockCircleOutlined />;
+            break;
+          case "late":
+            color = "warning";
+            icon = <ClockCircleOutlined />;
+            break;
+          case "absent":
+            color = "error";
+            icon = <CloseCircleOutlined />;
+            break;
+          default:
+            color = "default";
+        }
+
+        return (
+          <Tag color={color} icon={icon}>
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </Tag>
+        );
+      },
+      filters: [
+        { text: "Present", value: "present" },
+        { text: "Active", value: "active" },
+        { text: "Late", value: "late" },
+        { text: "Absent", value: "absent" },
+      ],
+      onFilter: (value: any, record: any) => record.status === value,
+    },
+    {
+      title: "Duration",
+      key: "duration",
+      render: (record: any) => {
+        console.log(record, "res");
+        if (record.checkIn && record.checkOut) {
+          const checkIn = moment(record.checkIn, "HH:mm");
+          const checkOut = moment(record.checkOut, "HH:mm");
+          const duration = moment.duration(checkOut.diff(checkIn));
+          const hours = Math.floor(duration.asHours());
+          const minutes = duration.minutes();
+          return `${hours}h ${minutes}m`;
+        }
+        return "-";
+      },
     },
   ];
 
   useEffect(() => {
     isUserCheckedIn();
-  }, [])
-
-  const currentWorker = {
-    id: 101,
-    uuid: "user-001",
-    name: "John Doe",
-    role: "Software Developer",
-    department: "Engineering",
-    avatarColor: "#1890ff",
-  };
+    fetchWorkingDays();
+    getAttendanceData();
+  }, []);
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Layout>
-        <Content style={{ padding: 18, background: "#ffffff" }}>
-          {/* Quick Actions Card */}
-          <Row gutter={[16, 16]} style={{ marginBottom: "24px" }}>
+        <Content style={{ padding: 24, background: "#ffffff" }}>
+          {/* Redesigned Quick Actions Card */}
+          <Row gutter={[24, 24]} style={{ marginBottom: "32px" }}>
             <Col span={24}>
               <Card>
                 <Row align="middle" gutter={24}>
-                  {/* <Col>
-                    <Avatar
-                      size={64}
-                      style={{ backgroundColor: currentWorker.avatarColor }}
-                      icon={<UserOutlined />}
-                    />
-                  </Col> */}
                   <Col flex={1}>
                     <Title level={3} style={{ marginBottom: 4 }}>
                       <span
@@ -294,21 +316,23 @@ const EmployeeDashboard = () => {
                     </Title>
 
                     <Paragraph type="secondary">
-                      {state.user?.departmentName} • ID: {currentWorker.id}
+                      {state.user?.departmentName}
                     </Paragraph>
-                    {/* <Space size="large">
+                    <Space size="large">
                       <Text>
                         <CalendarOutlined /> Today:{" "}
                         {moment().format("dddd, MMMM D")}
                       </Text>
-                    </Space> */}
+                    </Space>
                   </Col>
-                  <Col span={12} style={{ textAlign: "right" }}>
-                  {attendanceCompleted ? (
+                  <Col style={{ textAlign: "right" }}>
+                    {attendanceCompleted ? (
                       <Space direction="vertical" size="middle">
                         <Alert
-                          message="Attendance completed"
-                          style={{ alignItems: "center" }}
+                          message="Attendance completed for today"
+                          style={{
+                            alignItems: "center",
+                          }}
                           type="success"
                           showIcon
                         />
@@ -317,7 +341,9 @@ const EmployeeDashboard = () => {
                       <Space direction="vertical" size="middle">
                         <Alert
                           message="Currently Checked In"
-                          style={{ alignItems: "center" }}
+                          style={{
+                            alignItems: "center",
+                          }}
                           type="success"
                           showIcon
                         />
@@ -359,229 +385,262 @@ const EmployeeDashboard = () => {
                       </Button>
                     )}
                   </Col>
-                  {/* <Badge 
-                    status="processing" 
-                    text={
-                      <Tag 
-                        icon={status.icon} 
-                        color={status.color}
-                        style={{ fontSize: '16px', padding: '8px 16px' }}
-                      >
-                        {status.text}
-                      </Tag>
-                    } 
-                  /> */}
                 </Row>
               </Card>
             </Col>
           </Row>
 
-          {/* Stats Row */}
-          <Row gutter={16} style={{ marginBottom: 24 }}>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Attendance This Month"
-                  value={employeeData.attendanceThisMonth}
-                  suffix={`/ ${employeeData.workingDaysThisMonth}`}
-                  prefix={<ClockCircleOutlined />}
-                />
+          <Row gutter={[24, 24]} style={{ marginBottom: "32px" }}>
+            <Col xs={24} sm={12} lg={6}>
+              <Card
+                style={{
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 16,
+                  }}
+                >
+                  <Statistic
+                    title="Attendance"
+                    value={attendanceData?.length || 0}
+                    suffix={`/ ${workingDays || 0} days`}
+                    valueStyle={{ fontSize: 24, fontWeight: 600 }}
+                  />
+                  <div
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 16,
+                      background:
+                        "linear-gradient(135deg, #1890ff20 0%, #1890ff40 100%)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ClockCircleOutlined
+                      style={{ fontSize: 24, color: "#1890ff" }}
+                    />
+                  </div>
+                </div>
+
                 <Progress
-                  percent={
-                    (employeeData.attendanceThisMonth /
-                      employeeData.workingDaysThisMonth) *
-                    100
-                  }
+                  percent={Math.round(
+                    (attendanceData?.length / workingDays) * 100
+                  )}
                   size="small"
+                  strokeColor="#1890ff"
+                  trailColor="#e6f7ff"
+                  style={{ marginTop: 12 }}
                 />
               </Card>
             </Col>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Leaves Remaining"
-                  value={employeeData.remainingLeaves}
-                  suffix={`/ ${employeeData.totalLeaves}`}
-                  prefix={<CalendarOutlined />}
-                />
+            <Col xs={24} sm={12} lg={6}>
+              <Card
+                style={{
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 16,
+                  }}
+                >
+                  <div>
+                    <Statistic
+                      title="Contract Status"
+                      value={contractStatus?.status?.toUpperCase() || "N/A"}
+                      valueStyle={{
+                        fontSize: 24,
+                        fontWeight: 600,
+                        color: "#52c41a",
+                      }}
+                    />
+                    <Text
+                      type="secondary"
+                      style={{ fontSize: 13, display: "block", marginTop: 8 }}
+                    >
+                      Ends:{" "}
+                      {contractStatus?.endDate
+                        ? format(
+                            new Date(contractStatus.endDate),
+                            "MMM dd, yyyy"
+                          )
+                        : "-"}
+                    </Text>
+                  </div>
+                  <div
+                    style={{
+                      width: 48,
+                      height: 48,
+                      marginBottom: 25,
+                      borderRadius: 16,
+                      background:
+                        "linear-gradient(135deg, #52c41a20 0%, #52c41a40 100%)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <FileTextOutlined
+                      style={{ fontSize: 24, color: "#52c41a" }}
+                    />
+                  </div>
+                </div>
+              </Card>
+            </Col>
+            <Col xs={24} sm={12} lg={6}>
+              <Card
+                style={{
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 16,
+                  }}
+                >
+                  <Statistic
+                    title="Attendance Rate"
+                    value={
+                      Math.round(
+                        (attendanceData?.length / workingDays) * 100
+                      ) || 0
+                    }
+                    suffix="%"
+                    valueStyle={{ fontSize: 24, fontWeight: 600 }}
+                  />
+                  <div
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 16,
+                      background:
+                        "linear-gradient(135deg, #faad1420 0%, #faad1440 100%)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <RiseOutlined style={{ fontSize: 24, color: "#faad14" }} />
+                  </div>
+                </div>
                 <Progress
                   percent={
-                    (employeeData.remainingLeaves / employeeData.totalLeaves) *
-                    100
+                    Math.round((attendanceData?.length / workingDays) * 100) ||
+                    0
                   }
                   size="small"
                   status="active"
+                  strokeColor="#faad14"
+                  trailColor="#fff7e6"
+                  style={{ marginTop: 12 }}
                 />
               </Card>
             </Col>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Performance"
-                  value={employeeData.performance}
-                  suffix="%"
-                  prefix={<BarChartOutlined />}
-                />
-                <Progress
-                  percent={employeeData.performance}
-                  size="small"
-                  status="success"
-                />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
-                <Statistic
-                  title="Employee ID"
-                  value={employeeData.employeeId}
-                  prefix={<UserOutlined />}
-                />
-                <Text type="secondary">{employeeData.department}</Text>
+            <Col xs={24} sm={12} lg={6}>
+              <Card
+                style={{
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 18,
+                  }}
+                >
+                  <div>
+                    <Statistic
+                      title="Manager"
+                      value={
+                        managerName?.firstName + " " + managerName?.lastName ||
+                        "N/A"
+                      }
+                      valueStyle={{ fontSize: 20, fontWeight: 600 }}
+                    />
+                    <Text
+                      type="secondary"
+                      style={{ fontSize: 13, display: "block", marginTop: 8 }}
+                    >
+                      {managerName?.title || "Department Manager"}
+                    </Text>
+                  </div>
+                  <div
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 16,
+                      background:
+                        "linear-gradient(135deg, #eb2f9620 0%, #eb2f9640 100%)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TeamOutlined style={{ fontSize: 24, color: "#eb2f96" }} />
+                  </div>
+                </div>
               </Card>
             </Col>
           </Row>
 
-          {/* Main Content */}
-          <Row gutter={16}>
-            <Col span={16}>
-              <Tabs defaultActiveKey="attendance">
-                <TabPane tab="Attendance History" key="attendance">
-                  <Table
-                    columns={columns}
-                    dataSource={attendanceData}
-                    pagination={{ pageSize: 5 }}
-                  />
-                </TabPane>
-                <TabPane tab="Leaves Balance" key="leaves">
-                  <List
-                    dataSource={leaveTypes}
-                    renderItem={(item) => (
-                      <List.Item>
-                        <List.Item.Meta
-                          title={item.type}
-                          description={`${item.used} of ${item.total} days used`}
-                        />
-                        <Progress
-                          percent={(item.used / item.total) * 100}
-                          style={{ width: 200 }}
-                        />
-                      </List.Item>
-                    )}
-                  />
-                </TabPane>
-                <TabPane tab="Time Tracking" key="time">
-                  <Card>
-                    <Timeline>
-                      <Timeline.Item color="green">
-                        Checked In - 09:00 AM
-                      </Timeline.Item>
-                      <Timeline.Item>
-                        Lunch Break - 01:00 PM to 02:00 PM
-                      </Timeline.Item>
-                      <Timeline.Item>
-                        Meeting - 03:00 PM to 04:00 PM
-                      </Timeline.Item>
-                      <Timeline.Item color="red">
-                        Checked Out - 06:00 PM
-                      </Timeline.Item>
-                    </Timeline>
-                  </Card>
-                </TabPane>
-              </Tabs>
-            </Col>
-
-            <Col span={8}>
-              {/* Notifications */}
+          {/* Redesigned Main Content */}
+          <Row gutter={[24, 24]}>
+            <Col span={24}>
               <Card
-                title={
-                  <Space>
-                    <BellOutlined />
-                    Notifications
-                  </Space>
-                }
-                style={{ marginBottom: 16 }}
+                style={{
+                  border: "none",
+                }}
+                bodyStyle={{ padding: 0 }}
               >
-                <List
-                  dataSource={notifications}
-                  renderItem={(item) => (
-                    <List.Item>
-                      <List.Item.Meta
-                        avatar={
-                          <Badge dot={!item.read}>
-                            <Avatar icon={<BellOutlined />} />
-                          </Badge>
-                        }
-                        title={item.title}
-                        description={
-                          <>
-                            <Text>{item.description}</Text>
-                            <br />
-                            <Text type="secondary" style={{ fontSize: "12px" }}>
-                              {item.time}
-                            </Text>
-                          </>
-                        }
-                      />
-                    </List.Item>
-                  )}
-                />
-              </Card>
-
-              {/* Upcoming Holidays */}
-              <Card
-                title={
-                  <Space>
-                    <CalendarOutlined />
-                    Upcoming Holidays
-                  </Space>
-                }
-              >
-                <List
-                  dataSource={upcomingHolidays}
-                  renderItem={(item) => (
-                    <List.Item>
-                      <List.Item.Meta
-                        avatar={
-                          <Avatar style={{ background: "#1890ff" }}>
-                            {item.date.split(" ")[0]}
-                          </Avatar>
-                        }
-                        title={item.occasion}
-                        description={item.date}
-                      />
-                    </List.Item>
-                  )}
-                />
-              </Card>
-
-              {/* Quick Links */}
-              <Card title="Quick Links" style={{ marginTop: 16 }}>
-                <Space direction="vertical" style={{ width: "100%" }}>
-                  <Button block icon={<FileTextOutlined />}>
-                    Download Payslip
-                  </Button>
-                  <Button block icon={<CalendarOutlined />}>
-                    View Holiday Calendar
-                  </Button>
-                  <Button block icon={<TeamOutlined />}>
-                    Team Directory
-                  </Button>
-                  <Button block icon={<SettingOutlined />}>
-                    Account Settings
-                  </Button>
-                </Space>
+                <Tabs
+                  defaultActiveKey="attendance"
+                  style={{ padding: "0 24px" }}
+                  tabBarStyle={{
+                    marginBottom: 0,
+                    borderBottom: "1px solid #f0f0f0",
+                  }}
+                >
+                  <TabPane
+                    tab={
+                      <span style={{ fontSize: 15, fontWeight: 500 }}>
+                        <ClockCircleOutlined /> Attendance History
+                      </span>
+                    }
+                    key="attendance"
+                  >
+                    <Table
+                      columns={columns}
+                      dataSource={attendanceData}
+                      pagination={{ pageSize: 5 }}
+                      style={{ padding: "0 24px 24px", marginTop: 20 }}
+                      rowKey={(record) => record.id}
+                      className="custom-table"
+                    />
+                  </TabPane>
+                </Tabs>
               </Card>
             </Col>
           </Row>
         </Content>
       </Layout>
-      {/* Check In Modal */}
-      {/* Leave Application Modal */}
       <Modal
         title="Apply for Leave"
         open={showLeaveModal}
         onCancel={() => setShowLeaveModal(false)}
         footer={null}
+        style={{ borderRadius: 20 }}
+        bodyStyle={{ padding: "24px" }}
       >
         <Form form={form} layout="vertical" onFinish={handleLeaveSubmit}>
           <Form.Item
@@ -589,7 +648,7 @@ const EmployeeDashboard = () => {
             label="Leave Type"
             rules={[{ required: true, message: "Please select leave type" }]}
           >
-            <Select placeholder="Select leave type">
+            <Select placeholder="Select leave type" size="large">
               <Option value="casual">Casual Leave</Option>
               <Option value="sick">Sick Leave</Option>
               <Option value="earned">Earned Leave</Option>
@@ -603,7 +662,7 @@ const EmployeeDashboard = () => {
             label="Date Range"
             rules={[{ required: true, message: "Please select date range" }]}
           >
-            <DatePicker.RangePicker style={{ width: "100%" }} />
+            <DatePicker.RangePicker style={{ width: "100%" }} size="large" />
           </Form.Item>
 
           <Form.Item
@@ -611,13 +670,24 @@ const EmployeeDashboard = () => {
             label="Reason"
             rules={[{ required: true, message: "Please enter reason" }]}
           >
-            <Input.TextArea rows={4} placeholder="Enter reason for leave" />
+            <Input.TextArea
+              rows={4}
+              placeholder="Enter reason for leave"
+              size="large"
+            />
           </Form.Item>
 
           <Form.Item>
             <Space style={{ width: "100%", justifyContent: "flex-end" }}>
-              <Button onClick={() => setShowLeaveModal(false)}>Cancel</Button>
-              <Button type="primary" htmlType="submit" loading={loading}>
+              <Button onClick={() => setShowLeaveModal(false)} size="large">
+                Cancel
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                size="large"
+              >
                 Submit Application
               </Button>
             </Space>

@@ -59,10 +59,10 @@ const AdminLayout = () => {
                   key: "employees",
                   label: "All Employees",
                 },
-                {
-                  key: "employees/create",
-                  label: "Create Employee",
-                },
+                // {
+                //   key: "employees/create",
+                //   label: "Create Employee",
+                // },
               ],
             },
             {

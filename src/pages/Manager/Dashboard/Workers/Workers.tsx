@@ -281,6 +281,7 @@ const ManagerEmployeesTable = () => {
       title: 'Actions',
       key: 'actions',
       width: 100,
+      align: 'center',
       render: (record: any) => (
         <Space size="small">
           <Tooltip title="View Profile">
@@ -291,14 +292,14 @@ const ManagerEmployeesTable = () => {
               onClick={() => goToProfile(record.id)}
             />
           </Tooltip>
-          <Tooltip title="Send Message">
+          {/* <Tooltip title="Send Message">
             <Button
               type="text" 
               icon={<EditOutlined />}
               onClick={() => openEditModal(record)}
               size="small"
             />
-          </Tooltip>
+          </Tooltip> */}
         </Space>
       )
     }
@@ -347,14 +348,14 @@ const ManagerEmployeesTable = () => {
               </Space>
             </Col>
             <Col>
-              <Button
+              {/* <Button
                 type="primary"
-                ghost
+                // ghost
                 icon={<PlusOutlined />}
                 onClick={() => navigate("/manager/employees/create")}
               >
                 Add to Team
-              </Button>
+              </Button> */}
             </Col>
           </Row>
 
@@ -377,18 +378,18 @@ const ManagerEmployeesTable = () => {
                 suffix={<span style={{ fontSize: 12, opacity: 0.8 }}>/ {managerStats.teamSize}</span>}
               />
             </Col>
-            <Col xs={12} sm={4}>
+            {/* <Col xs={12} sm={4}>
               <Statistic
                 title="On Leave"
                 value={managerStats.onLeave}
                 valueStyle={{ color: "white" }}
               />
-            </Col>
+            </Col> */}
           </Row>
         </div>
 
         {/* Quick Actions */}
-        <div style={{ padding: "16px 24px", borderBottom: "1px solid #f0f0f0" }}>
+        {/* <div style={{ padding: "16px 24px", borderBottom: "1px solid #f0f0f0" }}>
           <Space wrap>
             {quickActionItems.map((item, index) => (
               <Button
@@ -404,7 +405,7 @@ const ManagerEmployeesTable = () => {
               </Button>
             ))}
           </Space>
-        </div>
+        </div> */}
 
         {/* Tabs and Content */}
         <Tabs
@@ -472,7 +473,7 @@ const ManagerEmployeesTable = () => {
             />
           </TabPane>
 
-          <TabPane tab="Reports" key="reports">
+          {/* <TabPane tab="Reports" key="reports">
             <div style={{ padding: "40px 0", textAlign: "center" }}>
               <TeamOutlined style={{ fontSize: 48, color: "#d9d9d9", marginBottom: 16 }} />
               <h3 style={{ color: "#666" }}>Team Reports</h3>
@@ -482,7 +483,7 @@ const ManagerEmployeesTable = () => {
                 <Button>Export Team Data</Button>
               </Space>
             </div>
-          </TabPane>
+          </TabPane> */}
         </Tabs>
       </Card>
 
